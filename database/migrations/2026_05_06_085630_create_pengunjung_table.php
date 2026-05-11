@@ -14,7 +14,14 @@ return new class extends Migration
 
             $table->string('nama_pengunjung');
 
+<<<<<<< HEAD
+            $table->enum('jenis_pengunjung', ['Murid', 'Guru']);
+
             $table->foreignId('id_kelas')
+                ->nullable()
+=======
+            $table->foreignId('id_kelas')
+>>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
                 ->constrained('kelas')
                 ->onDelete('cascade');
 

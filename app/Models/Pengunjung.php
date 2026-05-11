@@ -10,6 +10,10 @@ class Pengunjung extends Model
 
     protected $fillable = [
         'nama_pengunjung',
+<<<<<<< HEAD
+        'jenis_pengunjung',
+=======
+>>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
         'id_kelas',
         'tanggal_kunjung',
         'waktu_kunjung',
