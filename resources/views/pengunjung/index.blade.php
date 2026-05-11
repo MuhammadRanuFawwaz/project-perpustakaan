@@ -134,19 +134,11 @@
                                 </td>
 
                                 <td>
-<<<<<<< HEAD
                                    {{ $p->kelas->nama_kelas ?? '-' }}
                                 </td>
 
                                 <td>
                                     {{ $p->kelas->jurusan ?? '-' }}
-=======
-                                    {{ $p->kelas->nama_kelas }}
-                                </td>
-
-                                <td>
-                                    {{ $p->kelas->jurusan }}
->>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
                                 </td>
 
                                 <td>
