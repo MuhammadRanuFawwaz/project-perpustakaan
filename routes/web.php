@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('buku', BukuController::class);
 
+    Route::get('/pengunjung-export', [PengunjungController::class, 'export'])
+        ->name('pengunjung.export');
     Route::resource('pengunjung', PengunjungController::class);
 
     Route::post('/pinjam', [PeminjamanController::class, 'pinjam'])
