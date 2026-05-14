@@ -1,78 +1,32 @@
 <x-app-layout>
 
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/topbar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pengunjung.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/profile-modal.css') }}">
+
+    {{-- SELECT2 --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <div class="dashboard-container">
 
-        {{-- SIDEBAR --}}
         @include('layouts.sidebar')
 
-        {{-- MAIN --}}
         <div class="main-content" id="mainContent">
 
-            {{-- TOPBAR --}}
-            <div class="topbar">
+            @include('layouts.topbar')
 
-                <div class="topbar-right">
-
-                    <div class="profile-dropdown">
-
-                        <button class="profile-btn" id="profileBtn">
-
-                            <div class="user-info">
-
-                                <div class="user-name">
-                                    {{ auth()->user()->name }}
-                                </div>
-
-                                <div class="user-role">
-                                    Administrator
-                                </div>
-
-                            </div>
-
-                            <div class="user-avatar"></div>
-
-                        </button>
-
-                        <div class="dropdown-menu" id="dropdownMenu">
-
-                            <form method="POST"
-                                action="{{ route('logout') }}">
-
-                                @csrf
-
-                                <button type="submit"
-                                    class="logout-btn">
-
-                                    Logout
-
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {{-- CONTENT --}}
             <div class="content">
 
                 <div class="page-header">
 
-                    <h1>Data Pengunjung</h1>
-
-                    <a href="{{ route('pengunjung.create') }}"
-                        class="add-btn">
+                    <button class="add-btn"
+                        onclick="openTambahModal()">
 
                         + Tambah Pengunjung
 
-                    </a>
+                    </button>
 
                 </div>
 
@@ -81,19 +35,16 @@
                     <table>
 
                         <thead>
-
                             <tr>
-
                                 <th>Action</th>
                                 <th>Nama Pengunjung</th>
+                                <th>Jenis Pengunjung</th>
                                 <th>Kelas</th>
                                 <th>Jurusan</th>
                                 <th>Tanggal Kunjung</th>
                                 <th>Waktu Kunjung</th>
                                 <th>Keperluan</th>
-
                             </tr>
-
                         </thead>
 
                         <tbody>
@@ -104,12 +55,21 @@
 
                                 <td class="action-column">
 
-                                    <a href="{{ route('pengunjung.edit', $p->id) }}"
-                                        class="edit-btn">
+                                    <button type="button"
+                                        class="edit-btn"
+                                        onclick="openEditModal(
+                                            '{{ $p->id }}',
+                                            '{{ $p->nama_pengunjung }}',
+                                            '{{ $p->jenis_pengunjung }}',
+                                            '{{ $p->id_kelas }}',
+                                            '{{ $p->tanggal_kunjung }}',
+                                            '{{ $p->waktu_kunjung }}',
+                                            '{{ $p->keperluan }}'
+                                        )">
 
                                         Edit
 
-                                    </a>
+                                    </button>
 
                                     <form action="{{ route('pengunjung.destroy', $p->id) }}"
                                         method="POST"
@@ -119,7 +79,8 @@
                                         @method('DELETE')
 
                                         <button type="submit"
-                                            class="delete-btn">
+                                            class="delete-btn"
+                                            style="position: relative; z-index: 10;">
 
                                             Hapus
 
@@ -129,51 +90,25 @@
 
                                 </td>
 
-                                <td>
-                                    {{ $p->nama_pengunjung }}
-                                </td>
-
-                                <td>
-<<<<<<< HEAD
-                                   {{ $p->kelas->nama_kelas ?? '-' }}
-                                </td>
-
-                                <td>
-                                    {{ $p->kelas->jurusan ?? '-' }}
-=======
-                                    {{ $p->kelas->nama_kelas }}
-                                </td>
-
-                                <td>
-                                    {{ $p->kelas->jurusan }}
->>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
-                                </td>
-
-                                <td>
-                                    {{ $p->tanggal_kunjung }}
-                                </td>
-
-                                <td>
-                                    {{ $p->waktu_kunjung }}
-                                </td>
-
-                                <td>
-                                    {{ $p->keperluan }}
-                                </td>
+                                <td>{{ $p->nama_pengunjung }}</td>
+                                <td>{{ $p->jenis_pengunjung }}</td>
+                                <td>{{ $p->kelas->nama_kelas ?? '-' }}</td>
+                                <td>{{ $p->kelas->jurusan ?? '-' }}</td>
+                                <td>{{ $p->tanggal_kunjung }}</td>
+                                <td>{{ \Carbon\Carbon::parse($p->waktu_kunjung)->format('H:i') }}</td>
+                                <td>{{ $p->keperluan }}</td>
 
                             </tr>
 
                             @empty
 
                             <tr>
-
-                                <td colspan="7"
+                                <td colspan="8"
                                     class="empty-data">
 
                                     Belum ada data pengunjung
 
                                 </td>
-
                             </tr>
 
                             @endforelse
@@ -190,6 +125,58 @@
 
     </div>
 
+    <div class="modal"
+        id="pengunjungModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2 id="modalTitle">
+                    Tambah Pengunjung
+                </h2>
+
+                <span class="close"
+                    onclick="closeModal()">
+
+                    &times;
+
+                </span>
+
+            </div>
+
+            <form id="pengunjungForm"
+                method="POST">
+
+                @csrf
+
+                <div id="methodField"></div>
+
+                @include('pengunjung.partials.form')
+
+                <button type="submit"
+                    class="save-btn">
+
+                    Simpan
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    @include('profile.modal')
+
+    {{-- JQUERY --}}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    {{-- SELECT2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    {{-- JS --}}
+    <script src="{{ asset('js/pengunjung.js') }}"></script>
     <script src="{{ asset('js/app-layout.js') }}"></script>
 
 </x-app-layout>

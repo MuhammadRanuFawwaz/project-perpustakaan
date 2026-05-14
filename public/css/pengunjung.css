@@ -47,7 +47,6 @@ BUTTON
     color: white;
     padding: 8px 12px;
     border-radius: 6px;
-    text-decoration: none;
     border: none;
     cursor: pointer;
 }
@@ -67,8 +66,9 @@ BUTTON
     background: #4f46e5;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 15px;
 }
 
 /* ======================
@@ -122,26 +122,15 @@ ACTION
 FORM
 ====================== */
 
-.form-box {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 700px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.form-box h1 {
-    margin-bottom: 25px;
-    color: #4f46e5;
-}
-
 .form-group {
-    margin-bottom: 20px;
+    min-height: 75px;
+    margin-bottom: 18px;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
+    font-weight: 600;
 }
 
 .form-group input,
@@ -149,8 +138,100 @@ FORM
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 10px;
     box-sizing: border-box;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #4f46e5;
+}
+
+/* ======================
+MODAL
+====================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    padding-top: 60px;
+}
+
+.modal-content {
+    background: white;
+
+    width: 90%;
+
+    max-width: 700px;
+
+    padding: 25px 30px;
+
+    border-radius: 16px;
+
+    position: relative;
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    color: #4f46e5;
+}
+
+.close {
+    font-size: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.close:hover {
+    color: red;
+}
+
+/* ======================
+SELECT2 FIX (BIAR SAMA RATA)
+====================== */
+
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-selection--single {
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    border-radius: 10px !important;
+    border: 1px solid #ddd !important;
+}
+
+.select2-selection__rendered {
+    line-height: 44px !important;
+    padding-left: 10px !important;
+}
+
+.select2-selection__arrow {
+    height: 44px !important;
 }
 
 /* ======================
@@ -171,9 +252,5 @@ RESPONSIVE
 
     table {
         font-size: 14px;
-    }
-
-    .form-box {
-        max-width: 100%;
     }
 }

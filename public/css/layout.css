@@ -1,0 +1,20 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #f3f4f6;
+    font-family: sans-serif;
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 250px;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.main-full {
+    margin-left: 0;
+}

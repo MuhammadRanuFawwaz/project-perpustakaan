@@ -14,16 +14,10 @@ class PengunjungController extends Controller
             ->latest()
             ->get();
 
-        return view('pengunjung.index', compact(
-            'pengunjung'
-        ));
-    }
-
-    public function create()
-    {
         $kelas = Kelas::all();
 
-        return view('pengunjung.create', compact(
+        return view('pengunjung.index', compact(
+            'pengunjung',
             'kelas'
         ));
     }
@@ -32,12 +26,8 @@ class PengunjungController extends Controller
     {
         $request->validate([
             'nama_pengunjung' => 'required',
-<<<<<<< HEAD
             'jenis_pengunjung' => 'required',
             'id_kelas' => 'nullable',
-=======
-            'id_kelas' => 'required',
->>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
             'tanggal_kunjung' => 'required',
             'waktu_kunjung' => 'required',
             'keperluan' => 'required',
@@ -50,28 +40,12 @@ class PengunjungController extends Controller
             ->with('success', 'Data berhasil ditambahkan');
     }
 
-    public function edit($id)
-    {
-        $pengunjung = Pengunjung::findOrFail($id);
-
-        $kelas = Kelas::all();
-
-        return view('pengunjung.edit', compact(
-            'pengunjung',
-            'kelas'
-        ));
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
             'nama_pengunjung' => 'required',
-<<<<<<< HEAD
             'jenis_pengunjung' => 'required',
             'id_kelas' => 'nullable',
-=======
-            'id_kelas' => 'required',
->>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
             'tanggal_kunjung' => 'required',
             'waktu_kunjung' => 'required',
             'keperluan' => 'required',
@@ -96,8 +70,5 @@ class PengunjungController extends Controller
             ->route('pengunjung.index')
             ->with('success', 'Data berhasil dihapus');
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 7fd2d379b2aab1588c9827f01616e7a7d0700a36
+

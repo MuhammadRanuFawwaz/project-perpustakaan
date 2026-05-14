@@ -1,55 +1,61 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // ======================
-    // SIDEBAR
-    // ======================
-
     const toggleBtn = document.getElementById("toggleSidebar");
-
     const sidebar = document.getElementById("sidebar");
-
     const mainContent = document.getElementById("mainContent");
 
-    if (toggleBtn) {
+    if (toggleBtn && sidebar && mainContent) {
         toggleBtn.addEventListener("click", function () {
             sidebar.classList.toggle("sidebar-hide");
-
             mainContent.classList.toggle("main-full");
         });
     }
 
-    // ======================
-    // PROFILE
-    // ======================
-
     const profileBtn = document.getElementById("profileBtn");
-
     const dropdownMenu = document.getElementById("dropdownMenu");
 
-    if (profileBtn) {
-        profileBtn.addEventListener("click", function () {
+    if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
             dropdownMenu.classList.toggle("show-dropdown");
         });
-    }
 
-    // ======================
-    // MODAL
-    // ======================
-
-    const modal = document.getElementById("modalPengunjung");
-
-    const openModal = document.getElementById("openModal");
-
-    const closeModal = document.getElementById("closeModal");
-
-    if (openModal) {
-        openModal.addEventListener("click", function () {
-            modal.style.display = "flex";
+        window.addEventListener("click", function (e) {
+            if (
+                !profileBtn.contains(e.target) &&
+                !dropdownMenu.contains(e.target)
+            ) {
+                dropdownMenu.classList.remove("show-dropdown");
+            }
         });
     }
 
-    if (closeModal) {
-        closeModal.addEventListener("click", function () {
-            modal.style.display = "none";
+    window.openProfileModal = function () {
+        const profileModal = document.getElementById("profileModal");
+
+        if (profileModal) {
+            profileModal.style.display = "flex";
+        }
+
+        if (dropdownMenu) {
+            dropdownMenu.classList.remove("show-dropdown");
+        }
+    };
+
+    window.closeProfileModal = function () {
+        const profileModal = document.getElementById("profileModal");
+
+        if (profileModal) {
+            profileModal.style.display = "none";
+        }
+    };
+
+    const profileModal = document.getElementById("profileModal");
+
+    if (profileModal) {
+        profileModal.addEventListener("click", function (e) {
+            if (e.target === profileModal) {
+                profileModal.style.display = "none";
+            }
         });
     }
 });
