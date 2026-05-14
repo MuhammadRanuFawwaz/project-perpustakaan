@@ -90,6 +90,7 @@
 
                                 </td>
 
+
                                 <td>{{ $p->nama_pengunjung }}</td>
                                 <td>{{ $p->jenis_pengunjung }}</td>
                                 <td>{{ $p->kelas->nama_kelas ?? '-' }}</td>
@@ -97,6 +98,31 @@
                                 <td>{{ $p->tanggal_kunjung }}</td>
                                 <td>{{ \Carbon\Carbon::parse($p->waktu_kunjung)->format('H:i') }}</td>
                                 <td>{{ $p->keperluan }}</td>
+
+                                <td>
+                                    {{ $p->nama_pengunjung }}
+                                </td>
+
+                                <td>
+                                   {{ $p->kelas->nama_kelas ?? '-' }}
+                                </td>
+
+                                <td>
+                                    {{ $p->kelas->jurusan ?? '-' }}
+                                </td>
+
+                                <td>
+                                    {{ $p->tanggal_kunjung }}
+                                </td>
+
+                                <td>
+                                    {{ $p->waktu_kunjung }}
+                                </td>
+
+                                <td>
+                                    {{ $p->keperluan }}
+                                </td>
+
 
                             </tr>
 

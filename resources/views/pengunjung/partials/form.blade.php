@@ -12,8 +12,10 @@
 
 <div class="form-group">
 
+
     <label>Pengunjung</label>
 
+    <label>Jenis Pengunjung</label>
     <select name="jenis_pengunjung"
         id="jenis_pengunjung"
         required>
@@ -44,7 +46,11 @@
         @foreach($kelas as $k)
 
         <option value="{{ $k->id }}"
+
             data-jurusan="{{ $k->jurusan }}">
+      
+            data-jurusan="{{ $k->jurusan }}"
+            {{ old('id_kelas', $pengunjung->id_kelas ?? '') == $k->id ? 'selected' : '' }}>
 
             {{ $k->nama_kelas }} - {{ $k->jurusan }}
 
@@ -102,4 +108,9 @@
         placeholder="Masukkan keperluan"
         required>
 
+
 </div>
+
+</div>
+
+<script src="{{ asset('js/pengunjung.js') }}"></script>
