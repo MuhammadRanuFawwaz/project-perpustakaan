@@ -48,40 +48,93 @@
                 </div>
 
                 <div class="box">
-                    <div class="box-title">Statistik Siswa per Kelas</div>
-                    <p>Belum ada data statistik.</p>
+
+                    <div class="box-title">
+                        Statistik Pengunjung per Jurusan
+                    </div>
+
+                    @php
+                    $maxTotal = $statistikJurusan->max('total') ?: 1;
+                    @endphp
+
+                    @forelse($statistikJurusan as $s)
+
+                    @php
+                    $persen = ($s->total / $maxTotal) * 100;
+                    @endphp
+
+                    <div class="stat-item">
+
+                        <div class="stat-info">
+                            <strong>{{ $s->jurusan }}</strong>
+                            <span>{{ $s->total }} kunjungan</span>
+                        </div>
+
+                        <div class="stat-bar">
+                            <<div class="stat-fill" data-width="{{ $persen }}">
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="bottom-grid">
+                @empty
 
-                    <div class="box">
-                        <div class="box-title">Aktivitas Terakhir</div>
+                <p>Belum ada data statistik.</p>
+
+                @endforelse
+
+            </div>
+
+            <div class="bottom-grid">
+
+                <div class="box">
+
+                    <div class="box-title">
+                        Aktivitas Terakhir
+                    </div>
+
+                    <div class="activity-list">
 
                         @forelse($aktivitas as $a)
 
                         <div class="activity-item">
-                            <strong>
-                                {{ $a->peminjaman->pengunjung->nama_pengunjung ?? '-' }}
-                            </strong>
+
+                            <strong>{{ $a['judul'] }}</strong>
 
                             <br>
 
-                            {{ $a->status_buku }}
+                            <span>{{ $a['deskripsi'] }}</span>
+
+                            <br>
+
+                            <small>
+                                {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
+                            </small>
+
                         </div>
 
                         @empty
 
-                        Tidak ada aktivitas
+                        <p>Tidak ada aktivitas</p>
 
                         @endforelse
+
                     </div>
 
-                    <div class="box">
-                        <div class="box-title">Peringatan Jatuh Tempo</div>
+                </div>
+
+                <div class="box">
+
+                    <div class="box-title">
+                        Peringatan Jatuh Tempo
+                    </div>
+
+                    <div class="activity-list">
 
                         @forelse($jatuhTempo as $j)
 
                         <div class="warning-item">
+
                             <strong>
                                 {{ $j->pengunjung->nama_pengunjung ?? '-' }}
                             </strong>
@@ -89,13 +142,15 @@
                             <br>
 
                             Belum mengembalikan buku
+
                         </div>
 
                         @empty
 
-                        Tidak ada keterlambatan
+                        <p>Tidak ada keterlambatan</p>
 
                         @endforelse
+
                     </div>
 
                 </div>
@@ -106,8 +161,11 @@
 
     </div>
 
+    </div>
+
     @include('profile.modal')
 
     <script src="{{ asset('js/app-layout.js') }}"></script>
+    <script src="{{ asset('js/dashboard.js') }}"></script>
 
 </x-app-layout>

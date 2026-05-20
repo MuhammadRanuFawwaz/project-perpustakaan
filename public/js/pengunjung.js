@@ -1,14 +1,11 @@
 $(document).ready(function () {
-    /* SELECT2 */
-
-    $("#id_kelas").select2({
-        dropdownParent: $("#pengunjungModal"),
+    $(".select2-filter").select2({
         width: "100%",
     });
 
-    $("#jenis_pengunjung").select2({
-        dropdownParent: $("#pengunjungModal"),
+    $(".select2-modal").select2({
         width: "100%",
+        dropdownParent: $("#pengunjungModal"),
     });
 
     /* ELEMENT */
@@ -77,6 +74,8 @@ const methodField = document.getElementById("methodField");
 /* TAMBAH */
 
 function openTambahModal() {
+    $(".select2-filter").select2("close");
+    $(".select2-modal").select2("close");
     modal.style.display = "flex";
 
     modalTitle.innerText = "Tambah Pengunjung";

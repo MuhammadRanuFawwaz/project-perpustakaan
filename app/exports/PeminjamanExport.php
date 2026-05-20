@@ -2,8 +2,9 @@
 
 namespace App\Exports;
 
-use App\Models\Pengunjung;
+use App\Models\DetailPeminjaman;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -12,9 +13,8 @@ use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-use Carbon\Carbon;
 
-class PengunjungExport implements FromCollection, WithHeadings, WithMapping, WithEvents, WithCustomStartCell, WithDrawings
+class PeminjamanExport implements FromCollection, WithHeadings, WithMapping, WithEvents, WithCustomStartCell, WithDrawings
 {
     protected $request;
 
@@ -30,61 +30,74 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
 
     public function collection()
     {
-        $query = Pengunjung::with('kelas');
+        $query = DetailPeminjaman::with(['peminjaman.pengunjung.kelas', 'buku']);
 
         if ($this->request->start_date) {
-            $query->whereDate('tanggal_kunjung', '>=', $this->request->start_date);
-        }
-
-        if ($this->request->end_date) {
-            $query->whereDate('tanggal_kunjung', '<=', $this->request->end_date);
-        }
-
-        if ($this->request->nama_kelas) {
-            $query->whereHas('kelas', function ($q) {
-                $q->where('nama_kelas', $this->request->nama_kelas);
+            $query->whereHas('peminjaman', function ($q) {
+                $q->whereDate('tanggal_peminjaman', '>=', $this->request->start_date);
             });
         }
 
-        if ($this->request->jurusan) {
-            $query->whereHas('kelas', function ($q) {
-                $q->where('jurusan', $this->request->jurusan);
+        if ($this->request->end_date) {
+            $query->whereHas('peminjaman', function ($q) {
+                $q->whereDate('tanggal_peminjaman', '<=', $this->request->end_date);
+            });
+        }
+
+        if ($this->request->status_peminjaman) {
+            $query->whereHas('peminjaman', function ($q) {
+                $q->where('status_peminjaman', $this->request->status_peminjaman);
             });
         }
 
         if ($this->request->search) {
-            $query->where('nama_pengunjung', 'like', '%' . $this->request->search . '%');
+            $query->where(function ($q) {
+                $q->whereHas('peminjaman.pengunjung', function ($pengunjung) {
+                    $pengunjung->where('nama_pengunjung', 'like', '%' . $this->request->search . '%');
+                })
+                    ->orWhereHas('buku', function ($buku) {
+                        $buku->where('kode_buku', 'like', '%' . $this->request->search . '%')
+                            ->orWhere('judul_buku', 'like', '%' . $this->request->search . '%');
+                    });
+            });
         }
 
         return $query
-            ->orderBy('tanggal_kunjung', 'asc')
-            ->orderBy('waktu_kunjung', 'asc')
+            ->join('peminjaman', 'detail_peminjaman.id_peminjaman', '=', 'peminjaman.id')
+            ->orderBy('peminjaman.tanggal_peminjaman', 'asc')
+            ->select('detail_peminjaman.*')
             ->get();
     }
 
     public function headings(): array
     {
         return [
-            'Nama Pengunjung',
-            'Jenis Pengunjung',
+            'Nama Peminjam',
+            'Jenis',
             'Kelas',
             'Jurusan',
-            'Tanggal Kunjung',
-            'Waktu Kunjung',
-            'Keperluan',
+            'Kode Buku',
+            'Judul Buku',
+            'Tanggal Pinjam',
+            'Tanggal Kembali',
+            'Status Buku',
         ];
     }
 
-    public function map($pengunjung): array
+    public function map($detail): array
     {
+        $pengunjung = $detail->peminjaman->pengunjung;
+
         return [
-            $pengunjung->nama_pengunjung,
-            $pengunjung->jenis_pengunjung,
+            $pengunjung->nama_pengunjung ?? '-',
+            $pengunjung->jenis_pengunjung ?? '-',
             $pengunjung->kelas->nama_kelas ?? '-',
             $pengunjung->kelas->jurusan ?? '-',
-            Carbon::parse($pengunjung->tanggal_kunjung)->format('d-m-Y'),
-            Carbon::parse($pengunjung->waktu_kunjung)->format('H:i'),
-            $pengunjung->keperluan,
+            $detail->kode_buku,
+            $detail->buku->judul_buku ?? '-',
+            Carbon::parse($detail->peminjaman->tanggal_peminjaman)->format('d-m-Y'),
+            $detail->tanggal_dikembalikan ? Carbon::parse($detail->tanggal_dikembalikan)->format('d-m-Y') : '-',
+            ucfirst($detail->status_buku),
         ];
     }
 
@@ -94,9 +107,7 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
 
         $drawing->setName('Logo');
         $drawing->setDescription('Logo Sekolah');
-
         $drawing->setPath(public_path('images/Smkn1Tarumajaya.png'));
-
         $drawing->setHeight(90);
         $drawing->setCoordinates('A1');
         $drawing->setOffsetX(20);
@@ -112,9 +123,9 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
 
                 $sheet = $event->sheet->getDelegate();
 
-                $sheet->mergeCells('A1:G6');
+                $sheet->mergeCells('A1:I6');
 
-                $sheet->getStyle('A1:G6')->applyFromArray([
+                $sheet->getStyle('A1:I6')->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
@@ -123,7 +134,7 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
                     ],
                 ]);
 
-                $sheet->setCellValue('A1', 'DATA PENGUNJUNG PERPUSTAKAAN SMKN 1 TARUMAJAYA');
+                $sheet->setCellValue('A1', 'DATA PEMINJAMAN PERPUSTAKAAN SMKN 1 TARUMAJAYA');
 
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => [
@@ -136,7 +147,7 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
                     ],
                 ]);
 
-                $sheet->getStyle('A7:G7')->applyFromArray([
+                $sheet->getStyle('A7:I7')->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
@@ -153,7 +164,7 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
 
                 $lastRow = $sheet->getHighestRow();
 
-                $sheet->getStyle('A8:G' . $lastRow)->applyFromArray([
+                $sheet->getStyle('A8:I' . $lastRow)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => 'thin',
@@ -161,7 +172,7 @@ class PengunjungExport implements FromCollection, WithHeadings, WithMapping, Wit
                     ],
                 ]);
 
-                foreach (range('A', 'G') as $column) {
+                foreach (range('A', 'I') as $column) {
                     $sheet->getColumnDimension($column)->setAutoSize(true);
                 }
 

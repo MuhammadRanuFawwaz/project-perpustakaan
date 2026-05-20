@@ -70,3 +70,50 @@
     border-radius: 10px;
     margin-bottom: 15px;
 }
+
+.stat-item {
+    margin-bottom: 18px;
+}
+
+.stat-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.stat-info span {
+    color: #6b7280;
+}
+
+.stat-bar {
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    background: #4f46e5;
+    border-radius: 999px;
+}
+
+.activity-item small {
+    color: #6b7280;
+    font-size: 12px;
+}
+.activity-list {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.activity-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}

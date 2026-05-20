@@ -22,8 +22,19 @@ class PengunjungController extends Controller
             $query->whereDate('tanggal_kunjung', '<=', $request->end_date);
         }
 
-        if ($request->jenis_pengunjung) {
-            $query->where('jenis_pengunjung', $request->jenis_pengunjung);
+        if ($request->nama_kelas) {
+            $query->whereHas('kelas', function ($q) use ($request) {
+                $kelas = $request->nama_kelas;
+
+                if (preg_match('/^(X|XI|XII)-([A-Z])$/', $kelas, $match)) {
+                    $tingkat = $match[1];
+                    $rombel = $match[2];
+
+                    $q->where('nama_kelas', 'like', $tingkat . '-%' . $rombel);
+                } else {
+                    $q->where('nama_kelas', $kelas);
+                }
+            });
         }
 
         if ($request->jurusan) {
@@ -36,9 +47,12 @@ class PengunjungController extends Controller
             $query->where('nama_pengunjung', 'like', '%' . $request->search . '%');
         }
 
+        $perPage = $request->get('per_page', 10);
+
         $pengunjung = $query
             ->latest()
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
 
         $kelas = Kelas::all();
 

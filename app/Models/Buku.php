@@ -9,13 +9,17 @@ class Buku extends Model
     protected $table = 'buku';
 
     protected $primaryKey = 'kode_buku';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
         'kode_buku',
         'judul_buku',
         'id_kategori',
+        'jenjang_kelas',
+        'kode_ddc',
         'stok',
         'tanggal_kirim'
     ];

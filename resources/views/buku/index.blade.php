@@ -3,10 +3,9 @@
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/topbar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pengunjung.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/buku.css') }}">
     <link rel="stylesheet" href="{{ asset('css/profile-modal.css') }}">
 
-    {{-- SELECT2 --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <div class="dashboard-container">
@@ -21,71 +20,52 @@
 
                 <div class="filter-box">
 
-                    <form method="GET"
-                        action="{{ route('pengunjung.index') }}">
+                    <form method="GET" action="{{ route('buku.index') }}">
 
                         <div class="filter-grid">
 
                             <div class="filter-group">
                                 <label>Tanggal Awal</label>
-
-                                <input type="date"
-                                    name="start_date"
-                                    value="{{ request('start_date') }}">
+                                <input type="date" name="start_date" value="{{ request('start_date') }}">
                             </div>
 
                             <div class="filter-group">
                                 <label>Tanggal Akhir</label>
-
-                                <input type="date"
-                                    name="end_date"
-                                    value="{{ request('end_date') }}">
+                                <input type="date" name="end_date" value="{{ request('end_date') }}">
                             </div>
 
                             <div class="filter-group">
-                                <label>Filter Kelas</label>
+                                <label>Kategori</label>
 
-                                <select name="nama_kelas" class="select2-filter">
-                                    <option value="">Semua Kelas</option>
+                                <select name="id_kategori" class="select2">
+                                    <option value="">Semua Kategori</option>
 
-                                    @foreach ($kelas->filter(fn($k) => !str_contains($k->nama_kelas, 'TKR'))->unique('nama_kelas') as $k)
-                                    <option value="{{ $k->nama_kelas }}"
-                                        {{ request('nama_kelas') == $k->nama_kelas ? 'selected' : '' }}>
-                                        {{ $k->nama_kelas }}
+                                    @foreach($kategori as $k)
+                                    <option value="{{ $k->id }}"
+                                        {{ request('id_kategori') == $k->id ? 'selected' : '' }}>
+                                        {{ $k->nama_kategori }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <div class="filter-group">
-                                <label>Jurusan</label>
+                                <label>Jenjang Kelas</label>
 
-                                <select name="jurusan" class="select2-filter">
-
-                                    <option value="">
-                                        Semua Jurusan
-                                    </option>
-
-                                    @foreach($kelas->unique('jurusan') as $k)
-
-                                    <option value="{{ $k->jurusan }}"
-                                        {{ request('jurusan') == $k->jurusan ? 'selected' : '' }}>
-
-                                        {{ $k->jurusan }}
-
-                                    </option>
-
-                                    @endforeach
-
+                                <select name="jenjang_kelas" class="select2">
+                                    <option value="">Semua Jenjang</option>
+                                    <option value="X" {{ request('jenjang_kelas') == 'X' ? 'selected' : '' }}>X</option>
+                                    <option value="XI" {{ request('jenjang_kelas') == 'XI' ? 'selected' : '' }}>XI</option>
+                                    <option value="XII" {{ request('jenjang_kelas') == 'XII' ? 'selected' : '' }}>XII</option>
+                                    <option value="Umum" {{ request('jenjang_kelas') == 'Umum' ? 'selected' : '' }}>Umum</option>
                                 </select>
                             </div>
 
                             <div class="filter-group">
-                                <label>Cari Nama</label>
-
+                                <label>Cari Buku</label>
                                 <input type="text"
                                     name="search"
-                                    placeholder="Cari pengunjung..."
+                                    placeholder="Cari kode / judul..."
                                     value="{{ request('search') }}">
                             </div>
 
@@ -93,27 +73,18 @@
 
                         <div class="filter-action">
 
-                            <button type="submit"
-                                class="search-btn">
-
+                            <button type="submit" class="search-btn">
                                 Search
-
                             </button>
 
-                            <a href="{{ route('pengunjung.index') }}"
-                                class="refresh-btn">
-
+                            <a href="{{ route('buku.index') }}" class="refresh-btn">
                                 Refresh
-
                             </a>
 
-                            <a href="{{ route('pengunjung.export', request()->query()) }}"
+                            <a href="{{ route('buku.export', request()->query()) }}"
                                 class="export-btn">
-
                                 Export Excel
-
                             </a>
-
                         </div>
 
                     </form>
@@ -121,23 +92,27 @@
                 </div>
 
                 <div class="page-header">
-                    <button class="add-btn"
-                        onclick="openTambahModal()">
 
-                        + Tambah Pengunjung
-
+                    <button class="add-btn" onclick="openTambahModal()">
+                        + Tambah Buku
                     </button>
 
                 </div>
 
+                @if(session('success'))
+                <div class="success-alert">
+                    {{ session('success') }}
+                </div>
+                @endif
+
                 <div class="table-top">
 
-                    <form method="GET" action="{{ route('pengunjung.index') }}">
+                    <form method="GET" action="{{ route('buku.index') }}">
 
                         <input type="hidden" name="start_date" value="{{ request('start_date') }}">
                         <input type="hidden" name="end_date" value="{{ request('end_date') }}">
-                        <input type="hidden" name="nama_kelas" value="{{ request('nama_kelas') }}">
-                        <input type="hidden" name="jurusan" value="{{ request('jurusan') }}">
+                        <input type="hidden" name="id_kategori" value="{{ request('id_kategori') }}">
+                        <input type="hidden" name="jenjang_kelas" value="{{ request('jenjang_kelas') }}">
                         <input type="hidden" name="search" value="{{ request('search') }}">
 
                         <div class="show-entries">
@@ -153,7 +128,7 @@
                                 </option>
 
                                 <option value="10"
-                                    {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                    {{ request('per_page',10) == 10 ? 'selected' : '' }}>
                                     10
                                 </option>
 
@@ -184,19 +159,18 @@
                         <thead>
                             <tr>
                                 <th>Action</th>
-                                <th>Nama Pengunjung</th>
-                                <th>Jenis Pengunjung</th>
-                                <th>Kelas</th>
-                                <th>Jurusan</th>
-                                <th>Tanggal Kunjung</th>
-                                <th>Waktu Kunjung</th>
-                                <th>Keperluan</th>
+                                <th>Kode Buku</th>
+                                <th>Judul Buku</th>
+                                <th>Kategori</th>
+                                <th>Jenjang</th>
+                                <th>Stok</th>
+                                <th>Tanggal Kirim</th>
                             </tr>
                         </thead>
 
                         <tbody>
 
-                            @forelse($pengunjung as $p)
+                            @forelse($buku as $b)
 
                             <tr>
 
@@ -204,57 +178,49 @@
 
                                     <button type="button"
                                         class="edit-btn"
-                                        onclick="openEditModal(
-                                            '{{ $p->id }}',
-                                            '{{ $p->nama_pengunjung }}',
-                                            '{{ $p->jenis_pengunjung }}',
-                                            '{{ $p->id_kelas }}',
-                                            '{{ $p->tanggal_kunjung }}',
-                                            '{{ $p->waktu_kunjung }}',
-                                            '{{ $p->keperluan }}'
-                                        )">
+
+                                        data-kode="{{ $b->kode_buku }}"
+                                        data-judul="{{ $b->judul_buku }}"
+                                        data-kategori="{{ $b->id_kategori }}"
+                                        data-jenjang="{{ $b->jenjang_kelas }}"
+                                        data-stok="{{ $b->stok }}"
+                                        data-tanggal="{{ $b->tanggal_kirim }}"
+
+                                        onclick="openEditModalFromButton(this)">
 
                                         Edit
 
                                     </button>
 
-                                    <form action="{{ route('pengunjung.destroy', $p->id) }}"
+                                    <form action="{{ route('buku.destroy', $b->kode_buku) }}"
                                         method="POST"
-                                        onsubmit="return confirm('Yakin hapus data ini?')">
+                                        onsubmit="return confirm('Yakin hapus data buku ini?')">
 
                                         @csrf
                                         @method('DELETE')
 
-                                        <button type="submit"
-                                            class="delete-btn"
-                                            style="position: relative; z-index: 10;">
-
+                                        <button type="submit" class="delete-btn">
                                             Hapus
-
                                         </button>
 
                                     </form>
 
                                 </td>
 
-                                <td>{{ $p->nama_pengunjung }}</td>
-                                <td>{{ $p->jenis_pengunjung }}</td>
-                                <td>{{ $p->kelas->nama_kelas ?? '-' }}</td>
-                                <td>{{ $p->kelas->jurusan ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($p->tanggal_kunjung)->format('d-m-Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($p->waktu_kunjung)->format('H:i') }}</td>
-                                <td>{{ $p->keperluan }}</td>
+                                <td>{{ $b->kode_buku }}</td>
+                                <td>{{ $b->judul_buku }}</td>
+                                <td>{{ $b->kategori->nama_kategori ?? '-' }}</td>
+                                <td>{{ $b->jenjang_kelas ?? 'Umum' }}</td>
+                                <td>{{ $b->stok }}</td>
+                                <td>{{ \Carbon\Carbon::parse($b->tanggal_kirim)->format('d-m-Y') }}</td>
 
                             </tr>
 
                             @empty
 
                             <tr>
-                                <td colspan="8"
-                                    class="empty-data">
-
-                                    Belum ada data pengunjung
-
+                                <td colspan="7" class="empty-data">
+                                    Belum ada data buku
                                 </td>
                             </tr>
 
@@ -268,18 +234,18 @@
 
                 <div class="pagination-simple">
 
-                    @if ($pengunjung->onFirstPage())
+                    @if ($buku->onFirstPage())
                     <span class="page-disabled">Previous</span>
                     @else
-                    <a href="{{ $pengunjung->previousPageUrl() }}" class="page-btn">Previous</a>
+                    <a href="{{ $buku->previousPageUrl() }}" class="page-btn">Previous</a>
                     @endif
 
                     <span class="page-info">
-                        Page {{ $pengunjung->currentPage() }} of {{ $pengunjung->lastPage() }}
+                        Page {{ $buku->currentPage() }} of {{ $buku->lastPage() }}
                     </span>
 
-                    @if ($pengunjung->hasMorePages())
-                    <a href="{{ $pengunjung->nextPageUrl() }}" class="page-btn">Next</a>
+                    @if ($buku->hasMorePages())
+                    <a href="{{ $buku->nextPageUrl() }}" class="page-btn">Next</a>
                     @else
                     <span class="page-disabled">Next</span>
                     @endif
@@ -292,40 +258,32 @@
 
     </div>
 
-    <div class="modal"
-        id="pengunjungModal">
+    <div class="modal" id="bukuModal">
 
         <div class="modal-content">
 
             <div class="modal-header">
 
                 <h2 id="modalTitle">
-                    Tambah Pengunjung
+                    Tambah Buku
                 </h2>
 
-                <span class="close"
-                    onclick="closeModal()">
-
+                <span class="close" onclick="closeModal()">
                     &times;
-
                 </span>
 
             </div>
 
-            <form id="pengunjungForm"
-                method="POST">
+            <form id="bukuForm" method="POST">
 
                 @csrf
 
                 <div id="methodField"></div>
 
-                @include('pengunjung.partials.form')
+                @include('buku.partials.form')
 
-                <button type="submit"
-                    class="save-btn">
-
+                <button type="submit" class="save-btn">
                     Simpan
-
                 </button>
 
             </form>
@@ -336,14 +294,11 @@
 
     @include('profile.modal')
 
-    {{-- JQUERY --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    {{-- SELECT2 --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    {{-- JS --}}
-    <script src="{{ asset('js/pengunjung.js') }}"></script>
+    <script src="{{ asset('js/buku.js') }}"></script>
     <script src="{{ asset('js/app-layout.js') }}"></script>
 
 </x-app-layout>

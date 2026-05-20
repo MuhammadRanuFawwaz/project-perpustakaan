@@ -11,8 +11,9 @@ class Peminjaman extends Model
     protected $fillable = [
         'id_pengunjung',
         'tanggal_peminjaman',
+        'batas_pengembalian',
         'tanggal_pengembalian',
-        'status_peminjaman'
+        'status_peminjaman',
     ];
 
     public function pengunjung()

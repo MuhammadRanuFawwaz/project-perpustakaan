@@ -6,6 +6,10 @@
     align-items: center;
     color: white;
     box-sizing: border-box;
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .toggle-btn {
@@ -106,4 +110,7 @@
 
 .logout-btn:hover {
     background: #fee2e2;
+}
+.dropdown-menu {
+    z-index: 1100;
 }

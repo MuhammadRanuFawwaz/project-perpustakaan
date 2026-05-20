@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Buku;
-use App\Models\Peminjaman;
 
 class DetailPeminjaman extends Model
 {
@@ -14,7 +12,7 @@ class DetailPeminjaman extends Model
         'id_peminjaman',
         'kode_buku',
         'status_buku',
-        'tanggal_dikembalikan'
+        'tanggal_dikembalikan',
     ];
 
     public function peminjaman()

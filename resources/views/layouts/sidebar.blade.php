@@ -27,11 +27,13 @@
             Data Pengunjung
         </a>
 
-        <a href="/buku">
+        <a href="{{ route('buku.index') }}"
+            class="{{ request()->routeIs('buku.*') ? 'active' : '' }}">
             Data Buku
         </a>
 
-        <a href="#">
+        <a href="{{ route('peminjaman.index') }}"
+            class="{{ request()->routeIs('peminjaman.*') ? 'active' : '' }}">
             Peminjaman
         </a>
 
