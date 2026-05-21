@@ -227,9 +227,12 @@ SELECT2 FIX (BIAR SAMA RATA)
     height: 44px !important;
 }
 .select2-dropdown {
-    z-index: 999 !important;
+    z-index: 3005 !important;
 }
 
+.select2-container--open {
+    z-index: 3005 !important;
+}
 /* ======================
 FILTER
 ====================== */
@@ -364,8 +367,6 @@ FILTER
     color: #374151;
     font-size: 14px;
 }
-
-
 
 /* ======================
 RESPONSIVE

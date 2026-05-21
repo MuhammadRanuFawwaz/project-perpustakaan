@@ -7,6 +7,7 @@ use App\Models\Buku;
 use App\Models\DetailPeminjaman;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -59,6 +60,12 @@ class DashboardController extends Controller
             ->sortByDesc('waktu')
             ->take(8);
 
+        $jatuhTempo = Peminjaman::with(['pengunjung', 'details.buku'])
+            ->where('status_peminjaman', 'dipinjam')
+            ->whereDate('batas_pengembalian', '<=', Carbon::now()->addDays(3))
+            ->orderBy('batas_pengembalian', 'asc')
+            ->get();
+
         return view('dashboard', [
             'total_pengunjung' => Pengunjung::count(),
 
@@ -70,9 +77,7 @@ class DashboardController extends Controller
 
             'aktivitas' => $aktivitas,
 
-            'jatuhTempo' => Peminjaman::with('pengunjung')
-                ->where('status_peminjaman', 'dipinjam')
-                ->get()
+            'jatuhTempo' => $jatuhTempo,
         ]);
     }
 }

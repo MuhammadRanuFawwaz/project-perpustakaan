@@ -25,7 +25,7 @@ function renderSelectedBooks() {
 
         item.innerHTML = `
             <div>
-                <strong>${book.title}</strong>
+                <strong>[${book.jenjang}] ${book.title}</strong>
                 <small>Stok: ${book.stock}</small>
                 <input type="hidden" name="kode_buku[]" value="${book.code}">
             </div>
@@ -51,6 +51,7 @@ function tambahBukuDipinjam() {
     const code = select.value;
     const title = selectedOption.dataset.title;
     const stock = selectedOption.dataset.stock;
+    const jenjang = selectedOption.dataset.jenjang;
 
     const alreadyExists = selectedBooks.some((book) => book.code === code);
 
@@ -63,6 +64,7 @@ function tambahBukuDipinjam() {
         code: code,
         title: title,
         stock: stock,
+        jenjang: jenjang,
     });
 
     renderSelectedBooks();

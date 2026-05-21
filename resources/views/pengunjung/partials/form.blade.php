@@ -16,6 +16,7 @@
 
     <select name="jenis_pengunjung"
         id="jenis_pengunjung"
+        class="select2-modal"
         required>
 
         <option value="">
@@ -29,13 +30,13 @@
 
 </div>
 
-<div class="form-group"
-    id="kelas-group">
+<div class="form-group" id="kelas-group">
 
     <label>Pilih Kelas</label>
 
     <select name="id_kelas"
-        id="id_kelas">
+        id="id_kelas"
+        class="select2-modal">
 
         <option value="">
             -- Pilih Kelas --
@@ -56,8 +57,7 @@
 
 </div>
 
-<div class="form-group"
-    id="jurusan-group">
+<div class="form-group" id="jurusan-group">
 
     <label>Jurusan</label>
 
@@ -79,7 +79,6 @@
 
 </div>
 
-<!-- FIX UTAMA DI SINI -->
 <div class="form-group">
 
     <label>Waktu Kunjung</label>

@@ -66,6 +66,14 @@ class PeminjamanController extends Controller
             ->get();
 
         $buku = Buku::with('kategori')
+            ->orderByRaw("
+        CASE
+            WHEN jenjang_kelas = 'X' THEN 1
+            WHEN jenjang_kelas = 'XI' THEN 2
+            WHEN jenjang_kelas = 'XII' THEN 3
+            ELSE 4
+        END
+    ")
             ->orderBy('judul_buku')
             ->get();
 

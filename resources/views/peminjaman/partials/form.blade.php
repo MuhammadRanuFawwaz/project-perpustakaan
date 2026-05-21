@@ -31,8 +31,13 @@
             <option value="{{ $item->kode_buku }}"
                 data-title="{{ $item->judul_buku }}"
                 data-stock="{{ $item->stok }}"
+                data-jenjang="{{ $item->jenjang_kelas }}"
                 {{ $item->stok <= 0 ? 'disabled' : '' }}>
-                {{ $item->judul_buku }} - Stok: {{ $item->stok }}
+
+                [{{ $item->jenjang_kelas }}]
+                {{ $item->judul_buku }}
+                - Stok: {{ $item->stok }}
+
             </option>
             @endforeach
         </select>

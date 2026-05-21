@@ -54,7 +54,17 @@ class PengunjungController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $kelas = Kelas::all();
+        $kelas = Kelas::orderByRaw("
+        CASE
+            WHEN nama_kelas LIKE 'X-%' THEN 1
+            WHEN nama_kelas LIKE 'XI-%' THEN 2
+            WHEN nama_kelas LIKE 'XII-%' THEN 3
+            ELSE 4
+        END
+    ")
+            ->orderBy('nama_kelas')
+            ->orderBy('jurusan')
+            ->get();
 
         return view('pengunjung.index', compact(
             'pengunjung',

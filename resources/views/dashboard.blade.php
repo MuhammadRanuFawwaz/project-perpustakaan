@@ -71,85 +71,98 @@
                         </div>
 
                         <div class="stat-bar">
-                            <<div class="stat-fill" data-width="{{ $persen }}">
+                            <div class="stat-fill" data-width="{{ $persen }}"></div>
                         </div>
+
                     </div>
+
+                    @empty
+
+                    <p>Belum ada data statistik.</p>
+
+                    @endforelse
 
                 </div>
 
-                @empty
+                <div class="bottom-grid">
 
-                <p>Belum ada data statistik.</p>
+                    <div class="box">
 
-                @endforelse
+                        <div class="box-title">
+                            Aktivitas Terakhir
+                        </div>
 
-            </div>
+                        <div class="activity-list">
 
-            <div class="bottom-grid">
+                            @forelse($aktivitas as $a)
 
-                <div class="box">
+                            <div class="activity-item">
 
-                    <div class="box-title">
-                        Aktivitas Terakhir
-                    </div>
+                                <strong>{{ $a['judul'] }}</strong>
 
-                    <div class="activity-list">
+                                <br>
 
-                        @forelse($aktivitas as $a)
+                                <span>{{ $a['deskripsi'] }}</span>
 
-                        <div class="activity-item">
+                                <br>
 
-                            <strong>{{ $a['judul'] }}</strong>
+                                <small>
+                                    {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
+                                </small>
 
-                            <br>
+                            </div>
 
-                            <span>{{ $a['deskripsi'] }}</span>
+                            @empty
 
-                            <br>
+                            <p>Tidak ada aktivitas</p>
 
-                            <small>
-                                {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
-                            </small>
+                            @endforelse
 
                         </div>
 
-                        @empty
-
-                        <p>Tidak ada aktivitas</p>
-
-                        @endforelse
-
                     </div>
 
-                </div>
+                    <div class="box">
 
-                <div class="box">
-
-                    <div class="box-title">
-                        Peringatan Jatuh Tempo
-                    </div>
-
-                    <div class="activity-list">
-
-                        @forelse($jatuhTempo as $j)
-
-                        <div class="warning-item">
-
-                            <strong>
-                                {{ $j->pengunjung->nama_pengunjung ?? '-' }}
-                            </strong>
-
-                            <br>
-
-                            Belum mengembalikan buku
-
+                        <div class="box-title">
+                            Peringatan Jatuh Tempo
                         </div>
 
-                        @empty
+                        <div class="activity-list">
 
-                        <p>Tidak ada keterlambatan</p>
+                            @forelse($jatuhTempo as $j)
 
-                        @endforelse
+                            <div class="warning-item">
+
+                                <strong>
+                                    {{ $j->pengunjung->nama_pengunjung ?? '-' }}
+                                </strong>
+
+                                <br>
+
+                                <small>
+                                    Batas kembali:
+                                    {{ $j->batas_pengembalian ? \Carbon\Carbon::parse($j->batas_pengembalian)->format('d-m-Y') : '-' }}
+                                </small>
+
+                                <br>
+
+                                <span>
+                                    Buku:
+                                    @foreach($j->details->where('status_buku', 'dipinjam') as $detail)
+                                    {{ $detail->buku->judul_buku ?? $detail->kode_buku }}@if(!$loop->last), @endif
+                                    @endforeach
+                                </span>
+
+                            </div>
+
+                            @empty
+
+                            <p>Tidak ada buku yang mendekati jatuh tempo.</p>
+
+                            @endforelse
+
+                        </div>
 
                     </div>
 
@@ -158,8 +171,6 @@
             </div>
 
         </div>
-
-    </div>
 
     </div>
 
