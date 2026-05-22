@@ -18,7 +18,15 @@
 
     <!-- Scripts -->
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/topbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pengunjung.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/buku.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/peminjaman.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/profile-modal.css') }}">
 
 </head>
 
