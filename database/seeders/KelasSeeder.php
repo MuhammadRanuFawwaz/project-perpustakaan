@@ -10,7 +10,6 @@ class KelasSeeder extends Seeder
     public function run(): void
     {
         $kelas = [
-            # Teknik Komputer dan Jaringan #
             ['X-A', 'Teknik Komputer dan Jaringan'],
             ['X-B', 'Teknik Komputer dan Jaringan'],
             ['X-C', 'Teknik Komputer dan Jaringan'],
@@ -22,8 +21,7 @@ class KelasSeeder extends Seeder
             ['XII-A', 'Teknik Komputer dan Jaringan'],
             ['XII-B', 'Teknik Komputer dan Jaringan'],
             ['XII-C', 'Teknik Komputer dan Jaringan'],
-            
-            # Teknik Pemeliharaan Mesin Industri #
+
             ['X-A', 'Teknik Pemeliharaan Mesin Industri'],
             ['X-B', 'Teknik Pemeliharaan Mesin Industri'],
             ['X-C', 'Teknik Pemeliharaan Mesin Industri'],
@@ -35,37 +33,34 @@ class KelasSeeder extends Seeder
             ['XII-A', 'Teknik Pemeliharaan Mesin Industri'],
             ['XII-B', 'Teknik Pemeliharaan Mesin Industri'],
             ['XII-C', 'Teknik Pemeliharaan Mesin Industri'],
-            
-            # Kimia Industri #
-            ['X-A', 'Kimia Industri'],
-            ['X-B', 'Kimia Industri'],
-            ['X-C', 'Kimia Industri'],
 
-            ['XI-A', 'Kimia Industri'],
-            ['XI-B', 'Kimia Industri'],
-            ['XI-C', 'Kimia Industri'],
+            ['X-A', 'Teknik Kimia Industri'],
+            ['X-B', 'Teknik Kimia Industri'],
+            ['X-C', 'Teknik Kimia Industri'],
 
-            ['XII-A', 'Kimia Industri'],
-            ['XII-B', 'Kimia Industri'],
-            ['XII-C', 'Kimia Industri'],
-            
-            # Teknik Kendaraan Ringan #
-            ['X-TKR-A', 'Teknik Kendaraan Ringan'],
-            ['X-TKR-B', 'Teknik Kendaraan Ringan'],
-            ['X-TKR-C', 'Teknik Kendaraan Ringan'],
+            ['XI-A', 'Teknik Kimia Industri'],
+            ['XI-B', 'Teknik Kimia Industri'],
+            ['XI-C', 'Teknik Kimia Industri'],
 
-            ['XI-TKR-A', 'Teknik Kendaraan Ringan'],
-            ['XI-TKR-B', 'Teknik Kendaraan Ringan'],
-            ['XI-TKR-C', 'Teknik Kendaraan Ringan'],
+            ['XII-A', 'Teknik Kimia Industri'],
+            ['XII-B', 'Teknik Kimia Industri'],
+            ['XII-C', 'Teknik Kimia Industri'],
 
-            ['XII-TKR-A', 'Teknik Kendaraan Ringan'],
-            ['XII-TKR-B', 'Teknik Kendaraan Ringan'],
-            ['XII-TKR-C', 'Teknik Kendaraan Ringan'],
+            ['X-A', 'Teknik Kendaraan Ringan'],
+            ['X-B', 'Teknik Kendaraan Ringan'],
+            ['X-C', 'Teknik Kendaraan Ringan'],
+
+            ['XI-A', 'Teknik Kendaraan Ringan'],
+            ['XI-B', 'Teknik Kendaraan Ringan'],
+            ['XI-C', 'Teknik Kendaraan Ringan'],
+
+            ['XII-A', 'Teknik Kendaraan Ringan'],
+            ['XII-B', 'Teknik Kendaraan Ringan'],
+            ['XII-C', 'Teknik Kendaraan Ringan'],
         ];
 
         foreach ($kelas as $k) {
-
-            Kelas::create([
+            Kelas::firstOrCreate([
                 'nama_kelas' => $k[0],
                 'jurusan' => $k[1],
             ]);

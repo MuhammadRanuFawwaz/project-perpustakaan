@@ -22,6 +22,20 @@
             Dashboard
         </a>
 
+        @if(auth()->user()->role === 'superadmin')
+
+        <a href="{{ route('master.murid.index') }}"
+            class="{{ request()->routeIs('master.murid.*') ? 'active' : '' }}">
+            Data Master Murid
+        </a>
+
+        <a href="{{ route('master.guru.index') }}"
+            class="{{ request()->routeIs('master.guru.*') ? 'active' : '' }}">
+            Data Master Guru
+        </a>
+
+        @endif
+
         <a href="{{ route('pengunjung.index') }}"
             class="{{ request()->routeIs('pengunjung.*') ? 'active' : '' }}">
             Data Pengunjung

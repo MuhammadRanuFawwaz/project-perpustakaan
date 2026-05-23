@@ -19,6 +19,18 @@
 
             <div class="content">
 
+                @if(session('success'))
+                <div class="alert-success">
+                    {{ session('success') }}
+                </div>
+                @endif
+
+                @if(session('error'))
+                <div class="alert-error">
+                    {{ session('error') }}
+                </div>
+                @endif
+
                 <div class="filter-box">
 
                     <form method="GET"
@@ -61,27 +73,19 @@
                                 <label>Jurusan</label>
 
                                 <select name="jurusan" class="select2-filter">
-
-                                    <option value="">
-                                        Semua Jurusan
-                                    </option>
+                                    <option value="">Semua Jurusan</option>
 
                                     @foreach($kelas->unique('jurusan') as $k)
-
                                     <option value="{{ $k->jurusan }}"
                                         {{ request('jurusan') == $k->jurusan ? 'selected' : '' }}>
-
                                         {{ $k->jurusan }}
-
                                     </option>
-
                                     @endforeach
-
                                 </select>
                             </div>
 
                             <div class="filter-group">
-                                <label>Cari Nama</label>
+                                <label>Cari Nama / NIS / NIP</label>
 
                                 <input type="text"
                                     name="search"
@@ -127,7 +131,6 @@
                         + Tambah Pengunjung
 
                     </button>
-
                 </div>
 
                 <div class="table-top">
@@ -184,6 +187,7 @@
                         <thead>
                             <tr>
                                 <th>Action</th>
+                                <th>NIS / NIP</th>
                                 <th>Nama Pengunjung</th>
                                 <th>Jenis Pengunjung</th>
                                 <th>Kelas</th>
@@ -205,14 +209,15 @@
                                     <button type="button"
                                         class="edit-btn"
                                         onclick="openEditModal(
-                                            '{{ $p->id }}',
-                                            '{{ $p->nama_pengunjung }}',
-                                            '{{ $p->jenis_pengunjung }}',
-                                            '{{ $p->id_kelas }}',
-                                            '{{ $p->tanggal_kunjung }}',
-                                            '{{ $p->waktu_kunjung }}',
-                                            '{{ $p->keperluan }}'
-                                        )">
+                                                '{{ $p->id }}',
+                                                '{{ $p->nomor_induk }}',
+                                                '{{ $p->nama_pengunjung }}',
+                                                '{{ $p->jenis_pengunjung }}',
+                                                '{{ $p->id_kelas }}',
+                                                '{{ $p->kelas->nama_kelas ?? '-' }}',
+                                                '{{ $p->kelas->jurusan ?? '-' }}',
+                                                '{{ $p->keperluan }}'
+                                            )">
 
                                         Edit
 
@@ -226,8 +231,7 @@
                                         @method('DELETE')
 
                                         <button type="submit"
-                                            class="delete-btn"
-                                            style="position: relative; z-index: 10;">
+                                            class="delete-btn">
 
                                             Hapus
 
@@ -237,6 +241,7 @@
 
                                 </td>
 
+                                <td>{{ $p->nomor_induk ?? '-' }}</td>
                                 <td>{{ $p->nama_pengunjung }}</td>
                                 <td>{{ $p->jenis_pengunjung }}</td>
                                 <td>{{ $p->kelas->nama_kelas ?? '-' }}</td>
@@ -250,11 +255,8 @@
                             @empty
 
                             <tr>
-                                <td colspan="8"
-                                    class="empty-data">
-
+                                <td colspan="9" class="empty-data">
                                     Belum ada data pengunjung
-
                                 </td>
                             </tr>
 

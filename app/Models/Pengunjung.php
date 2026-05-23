@@ -9,12 +9,13 @@ class Pengunjung extends Model
     protected $table = 'pengunjung';
 
     protected $fillable = [
+        'nomor_induk',
         'nama_pengunjung',
         'jenis_pengunjung',
         'id_kelas',
         'tanggal_kunjung',
         'waktu_kunjung',
-        'keperluan'
+        'keperluan',
     ];
 
     public function kelas()

@@ -1,59 +1,65 @@
 <div class="form-group">
 
-    <label>Nama Pengunjung</label>
+    <label>NIS / NIP</label>
 
-    <input type="text"
-        name="nama_pengunjung"
-        id="nama_pengunjung"
-        placeholder="Masukkan nama pengunjung"
-        required>
+    <div class="lookup-row">
+
+        <input type="text"
+            name="nomor_induk"
+            id="nomor_induk"
+            placeholder="Masukkan NIS atau NIP"
+            required>
+
+        <button type="button"
+            class="lookup-btn"
+            onclick="cekNomorInduk()">
+
+            Cek
+
+        </button>
+
+    </div>
+
+    <small id="lookup-message"></small>
 
 </div>
 
 <div class="form-group">
 
-    <label>Pengunjung</label>
+    <label>Status</label>
 
-    <select name="jenis_pengunjung"
+    <input type="text"
+        name="jenis_pengunjung"
         id="jenis_pengunjung"
-        class="select2-modal"
-        required>
-
-        <option value="">
-            -- Pilih Pengunjung --
-        </option>
-
-        <option value="Murid">Murid</option>
-        <option value="Guru">Guru</option>
-
-    </select>
+        placeholder="Status otomatis"
+        readonly>
 
 </div>
 
+<div class="form-group">
+
+    <label>Nama Pengunjung</label>
+
+    <input type="text"
+        name="nama_pengunjung"
+        id="nama_pengunjung"
+        placeholder="Nama otomatis setelah NIS/NIP dicek"
+        readonly>
+
+</div>
+
+<input type="hidden"
+    name="id_kelas"
+    id="id_kelas">
+
 <div class="form-group" id="kelas-group">
 
-    <label>Pilih Kelas</label>
+    <label>Kelas</label>
 
-    <select name="id_kelas"
-        id="id_kelas"
-        class="select2-modal">
-
-        <option value="">
-            -- Pilih Kelas --
-        </option>
-
-        @foreach($kelas as $k)
-
-        <option value="{{ $k->id }}"
-            data-jurusan="{{ $k->jurusan }}">
-
-            {{ $k->nama_kelas }} - {{ $k->jurusan }}
-
-        </option>
-
-        @endforeach
-
-    </select>
+    <input type="text"
+        id="nama_kelas"
+        placeholder="Kelas otomatis"
+        readonly>
 
 </div>
 
@@ -72,10 +78,9 @@
 
     <label>Tanggal Kunjung</label>
 
-    <input type="date"
-        name="tanggal_kunjung"
-        id="tanggal_kunjung"
-        value="{{ date('Y-m-d') }}">
+    <input type="text"
+        value="Otomatis oleh sistem"
+        readonly>
 
 </div>
 
@@ -83,11 +88,9 @@
 
     <label>Waktu Kunjung</label>
 
-    <input type="time"
-        name="waktu_kunjung"
-        id="waktu_kunjung"
-        step="60"
-        value="">
+    <input type="text"
+        value="Otomatis oleh sistem"
+        readonly>
 
 </div>
 

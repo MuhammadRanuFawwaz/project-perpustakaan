@@ -7,27 +7,55 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\PengunjungController;
 use App\Http\Controllers\PeminjamanController;
-
-/*WEB ROUTE*/
+use App\Http\Controllers\Master\MuridController;
+use App\Http\Controllers\Master\GuruController;
 
 Route::get('/', function () {
-
     return redirect()->route('login');
 });
-
-/*AUTH ROUTES*/
 
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
+    Route::middleware('superadmin')
+        ->prefix('master')
+        ->name('master.')
+        ->group(function () {
+            Route::post('/murid/import', [MuridController::class, 'import'])
+                ->name('murid.import');
+
+            Route::get('/murid/export', [MuridController::class, 'export'])
+                ->name('murid.export');
+
+            Route::post('/murid/luluskan', [MuridController::class, 'luluskan'])
+                ->name('murid.luluskan');
+
+            Route::resource('murid', MuridController::class)
+                ->except(['show', 'create']);
+
+            Route::post('/guru/import', [GuruController::class, 'import'])
+                ->name('guru.import');
+
+            Route::get('/guru/export', [GuruController::class, 'export'])
+                ->name('guru.export');
+
+            Route::resource('guru', GuruController::class)
+                ->except(['show', 'create']);
+        });
+
+    Route::get('/pengunjung/lookup', [PengunjungController::class, 'lookup'])
+        ->name('pengunjung.lookup');
+
     Route::get('/pengunjung-export', [PengunjungController::class, 'export'])
         ->name('pengunjung.export');
+
     Route::resource('pengunjung', PengunjungController::class);
 
     Route::get('/buku/export', [BukuController::class, 'export'])
         ->name('buku.export');
+
     Route::resource('buku', BukuController::class);
 
     Route::get('/peminjaman/export', [PeminjamanController::class, 'export'])
@@ -37,6 +65,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/kembali/{id}', [PeminjamanController::class, 'kembali'])
         ->name('kembali');
+
     Route::post('/hilang/{id}', [PeminjamanController::class, 'hilang'])
         ->name('hilang');
 

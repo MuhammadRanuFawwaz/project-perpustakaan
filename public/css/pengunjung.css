@@ -368,6 +368,44 @@ FILTER
     font-size: 14px;
 }
 
+.lookup-row {
+    display: flex;
+    gap: 10px;
+}
+
+.lookup-row input {
+    flex: 1;
+}
+
+.lookup-btn {
+    width: 90px;
+    border: none;
+    border-radius: 10px;
+    background: #4f46e5;
+    color: white;
+    cursor: pointer;
+}
+
+#lookup-message {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+}
+
+#lookup-message.success {
+    color: #16a34a;
+}
+
+#lookup-message.error {
+    color: #ef4444;
+}
+.edit-btn {
+    text-decoration: none;
+}
+.header-action {
+    display: flex;
+    gap: 12px;
+}
 /* ======================
 RESPONSIVE
 ====================== */
