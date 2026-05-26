@@ -113,6 +113,17 @@ class PengunjungController extends Controller
                 ->with('error', 'NIS / NIP tidak ditemukan di data master.');
         }
 
+        $sudahAbsen = Pengunjung::where('nomor_induk', $dataIdentitas['nomor_induk'])
+            ->whereDate('tanggal_kunjung', now()->toDateString())
+            ->whereTime('waktu_kunjung', '>=', now()->subMinutes(5)->format('H:i:s'))
+            ->exists();
+
+        if ($sudahAbsen) {
+            return redirect()
+                ->route('pengunjung.index')
+                ->with('error', 'Pengunjung ini sudah melakukan kunjungan dalam 5 menit terakhir.');
+        }
+
         Pengunjung::create([
             'nomor_induk' => $dataIdentitas['nomor_induk'],
             'nama_pengunjung' => $dataIdentitas['nama_pengunjung'],
@@ -187,6 +198,7 @@ class PengunjungController extends Controller
     {
         $murid = Murid::with('kelas')
             ->where('nis', $nomorInduk)
+            ->where('status', 'aktif')
             ->first();
 
         if ($murid) {

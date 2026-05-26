@@ -29,7 +29,10 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
 
     public function collection()
     {
-        $query = Buku::with('kategori');
+        $query = Buku::with([
+            'kategori',
+            'ddc',
+        ]);
 
         if ($this->request->start_date) {
             $query->whereDate('tanggal_kirim', '>=', $this->request->start_date);
@@ -43,6 +46,10 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
             $query->where('id_kategori', $this->request->id_kategori);
         }
 
+        if ($this->request->id_ddc) {
+            $query->where('id_ddc', $this->request->id_ddc);
+        }
+
         if ($this->request->jenjang_kelas) {
             $query->where('jenjang_kelas', $this->request->jenjang_kelas);
         }
@@ -50,7 +57,12 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
         if ($this->request->search) {
             $query->where(function ($q) {
                 $q->where('kode_buku', 'like', '%' . $this->request->search . '%')
-                    ->orWhere('judul_buku', 'like', '%' . $this->request->search . '%');
+                    ->orWhere('judul_buku', 'like', '%' . $this->request->search . '%')
+                    ->orWhere('kode_ddc', 'like', '%' . $this->request->search . '%')
+                    ->orWhereHas('ddc', function ($ddc) {
+                        $ddc->where('kode_ddc', 'like', '%' . $this->request->search . '%')
+                            ->orWhere('nama_ddc', 'like', '%' . $this->request->search . '%');
+                    });
             });
         }
 
@@ -66,6 +78,7 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
             'Kode Buku',
             'Judul Buku',
             'Kategori',
+            'DDC',
             'Kelas',
             'Stok',
             'Tanggal Kirim',
@@ -78,6 +91,7 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
             $buku->kode_buku,
             $buku->judul_buku,
             $buku->kategori->nama_kategori ?? '-',
+            ($buku->ddc->kode_ddc ?? $buku->kode_ddc ?? '-') . ' - ' . ($buku->ddc->nama_ddc ?? '-'),
             $buku->jenjang_kelas ?? 'Umum',
             $buku->stok,
             \Carbon\Carbon::parse($buku->tanggal_kirim)->format('d-m-Y'),
@@ -90,9 +104,7 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
 
         $drawing->setName('Logo');
         $drawing->setDescription('Logo Sekolah');
-
         $drawing->setPath(public_path('images/Smkn1Tarumajaya.png'));
-
         $drawing->setHeight(90);
         $drawing->setCoordinates('A1');
         $drawing->setOffsetX(20);
@@ -108,13 +120,13 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
 
                 $sheet = $event->sheet->getDelegate();
 
-                $sheet->mergeCells('A1:F6');
+                $sheet->mergeCells('A1:G6');
 
-                $sheet->getStyle('A1:F6')->applyFromArray([
+                $sheet->getStyle('A1:G6')->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => [
-                            'rgb' => '4A86E8', // Gunakan kode HEX tanpa tanda #
+                            'rgb' => '4A86E8',
                         ],
                     ],
                 ]);
@@ -132,7 +144,7 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
                     ],
                 ]);
 
-                $sheet->getStyle('A7:F7')->applyFromArray([
+                $sheet->getStyle('A7:G7')->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
@@ -149,7 +161,7 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
 
                 $lastRow = $sheet->getHighestRow();
 
-                $sheet->getStyle('A8:F' . $lastRow)->applyFromArray([
+                $sheet->getStyle('A8:G' . $lastRow)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => 'thin',
@@ -157,7 +169,7 @@ class BukuExport implements FromCollection, WithHeadings, WithMapping, WithEvent
                     ],
                 ]);
 
-                foreach (range('A', 'F') as $column) {
+                foreach (range('A', 'G') as $column) {
                     $sheet->getColumnDimension($column)->setAutoSize(true);
                 }
 

@@ -406,6 +406,13 @@ FILTER
     display: flex;
     gap: 12px;
 }
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+}
 /* ======================
 RESPONSIVE
 ====================== */

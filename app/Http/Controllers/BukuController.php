@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Buku;
 use App\Models\Kategori;
 use App\Exports\BukuExport;
+use App\Imports\BukuImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class BukuController extends Controller
@@ -41,12 +42,17 @@ class BukuController extends Controller
         $perPage = $request->get('per_page', 10);
 
         $buku = $query
-            ->orderBy('tanggal_kirim', 'asc')
+            ->orderBy('tanggal_kirim', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
-        $kategori = Kategori::all();
 
-        return view('buku.index', compact('buku', 'kategori'));
+        $kategori = Kategori::orderBy('nama_kategori')->get();
+
+        return view('buku.index', compact(
+            'buku',
+            'kategori'
+        ));
     }
 
     public function store(Request $request)
@@ -70,7 +76,7 @@ class BukuController extends Controller
 
         Buku::create([
             'kode_buku' => $kodeBuku,
-            'judul_buku' => $request->judul_buku,
+            'judul_buku' => strtoupper($request->judul_buku),
             'id_kategori' => $request->id_kategori,
             'jenjang_kelas' => $request->jenjang_kelas ?? 'Umum',
             'kode_ddc' => $request->kode_ddc,
@@ -97,7 +103,7 @@ class BukuController extends Controller
         ]);
 
         $buku->update([
-            'judul_buku' => $request->judul_buku,
+            'judul_buku' => strtoupper($request->judul_buku),
             'id_kategori' => $request->id_kategori,
             'jenjang_kelas' => $request->jenjang_kelas ?? 'Umum',
             'kode_ddc' => $request->kode_ddc,
@@ -113,11 +119,36 @@ class BukuController extends Controller
     public function destroy($kode_buku)
     {
         $buku = Buku::findOrFail($kode_buku);
+
         $buku->delete();
 
         return redirect()
             ->route('buku.index')
             ->with('success', 'Data buku berhasil dihapus');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            $hasil = (new BukuImport())->import($request->file('file_excel'));
+        } catch (\Throwable $e) {
+            return redirect()
+                ->route('buku.index')
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()
+            ->route('buku.index')
+            ->with(
+                'success',
+                'Import selesai. Data baru: ' . $hasil['berhasil'] .
+                    '. Data update: ' . $hasil['update'] .
+                    '. Baris dilewati: ' . $hasil['dilewati'] . '.'
+            );
     }
 
     private function generateKodeBuku($kodeDdc, $namaKategori, $jenjangKelas)

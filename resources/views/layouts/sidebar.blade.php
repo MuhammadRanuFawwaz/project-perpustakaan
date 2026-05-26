@@ -26,24 +26,34 @@
 
         <a href="{{ route('master.murid.index') }}"
             class="{{ request()->routeIs('master.murid.*') ? 'active' : '' }}">
-            Data Master Murid
+            Data Murid
         </a>
 
         <a href="{{ route('master.guru.index') }}"
             class="{{ request()->routeIs('master.guru.*') ? 'active' : '' }}">
-            Data Master Guru
+            Data Guru
+        </a>
+
+        <a href="{{ route('master.kategori.index') }}"
+            class="{{ request()->routeIs('master.kategori.*') ? 'active' : '' }}">
+            Master Kategori
+        </a>
+
+        <a href="{{ route('master.ddc.index') }}"
+            class="{{ request()->routeIs('master.ddc.*') ? 'active' : '' }}">
+            Master DDC
         </a>
 
         @endif
 
         <a href="{{ route('pengunjung.index') }}"
             class="{{ request()->routeIs('pengunjung.*') ? 'active' : '' }}">
-            Data Pengunjung
+            Pengunjung
         </a>
 
         <a href="{{ route('buku.index') }}"
             class="{{ request()->routeIs('buku.*') ? 'active' : '' }}">
-            Data Buku
+            Buku
         </a>
 
         <a href="{{ route('peminjaman.index') }}"

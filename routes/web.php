@@ -9,6 +9,8 @@ use App\Http\Controllers\PengunjungController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\Master\MuridController;
 use App\Http\Controllers\Master\GuruController;
+use App\Http\Controllers\Master\KategoriController;
+use App\Http\Controllers\Master\DdcController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -43,6 +45,12 @@ Route::middleware('auth')->group(function () {
 
             Route::resource('guru', GuruController::class)
                 ->except(['show', 'create']);
+
+            Route::resource('kategori', KategoriController::class)
+                ->except(['show', 'create', 'edit']);
+
+            Route::resource('ddc', DdcController::class)
+                ->except(['show', 'create', 'edit']);
         });
 
     Route::get('/pengunjung/lookup', [PengunjungController::class, 'lookup'])
@@ -52,6 +60,9 @@ Route::middleware('auth')->group(function () {
         ->name('pengunjung.export');
 
     Route::resource('pengunjung', PengunjungController::class);
+
+    Route::post('/buku/import', [BukuController::class, 'import'])
+        ->name('buku.import');
 
     Route::get('/buku/export', [BukuController::class, 'export'])
         ->name('buku.export');

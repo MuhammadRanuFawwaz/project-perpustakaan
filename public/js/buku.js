@@ -1,5 +1,7 @@
 const modal = document.getElementById("bukuModal");
 
+const importModal = document.getElementById("importModal");
+
 const form = document.getElementById("bukuForm");
 
 const modalTitle = document.getElementById("modalTitle");
@@ -57,6 +59,14 @@ function openEditModalFromButton(button) {
     $("#kode_ddc").val(button.dataset.ddc).trigger("change");
 }
 
+function openImportModal() {
+    importModal.style.display = "flex";
+}
+
+function closeImportModal() {
+    importModal.style.display = "none";
+}
+
 function closeModal() {
     modal.style.display = "none";
 }
@@ -64,6 +74,10 @@ function closeModal() {
 window.addEventListener("click", function (e) {
     if (e.target == modal) {
         closeModal();
+    }
+
+    if (e.target == importModal) {
+        closeImportModal();
     }
 });
 

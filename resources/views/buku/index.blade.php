@@ -93,15 +93,33 @@
 
                 <div class="page-header">
 
-                    <button class="add-btn" onclick="openTambahModal()">
-                        + Tambah Buku
-                    </button>
+                    <div class="header-action">
+
+                        <button class="add-btn" onclick="openTambahModal()">
+                            + Tambah Buku
+                        </button>
+
+                        <button class="export-btn"
+                            type="button"
+                            onclick="openImportModal()">
+
+                            Import Excel
+
+                        </button>
+
+                    </div>
 
                 </div>
 
                 @if(session('success'))
                 <div class="success-alert">
                     {{ session('success') }}
+                </div>
+                @endif
+
+                @if(session('error'))
+                <div class="alert-error">
+                    {{ session('error') }}
                 </div>
                 @endif
 
@@ -163,6 +181,7 @@
                                 <th>Judul Buku</th>
                                 <th>Kategori</th>
                                 <th>Jenjang</th>
+                                <th>DDC</th>
                                 <th>Stok</th>
                                 <th>Tanggal Kirim</th>
                             </tr>
@@ -183,6 +202,7 @@
                                         data-judul="{{ $b->judul_buku }}"
                                         data-kategori="{{ $b->id_kategori }}"
                                         data-jenjang="{{ $b->jenjang_kelas }}"
+                                        data-ddc="{{ $b->kode_ddc }}"
                                         data-stok="{{ $b->stok }}"
                                         data-tanggal="{{ $b->tanggal_kirim }}"
 
@@ -211,6 +231,7 @@
                                 <td>{{ $b->judul_buku }}</td>
                                 <td>{{ $b->kategori->nama_kategori ?? '-' }}</td>
                                 <td>{{ $b->jenjang_kelas ?? 'Umum' }}</td>
+                                <td>{{ $b->kode_ddc ?? '-' }}</td>
                                 <td>{{ $b->stok }}</td>
                                 <td>{{ \Carbon\Carbon::parse($b->tanggal_kirim)->format('d-m-Y') }}</td>
 
@@ -219,7 +240,7 @@
                             @empty
 
                             <tr>
-                                <td colspan="7" class="empty-data">
+                                <td colspan="8" class="empty-data">
                                     Belum ada data buku
                                 </td>
                             </tr>
@@ -291,6 +312,8 @@
         </div>
 
     </div>
+
+    @include('buku.partials.import-modal')
 
     @include('profile.modal')
 

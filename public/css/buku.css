@@ -358,6 +358,14 @@ th {
     height: 44px !important;
     right: 10px !important;
 }
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+}
 @media (max-width: 900px) {
     .filter-grid {
         grid-template-columns: 1fr;

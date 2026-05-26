@@ -18,6 +18,7 @@ class Buku extends Model
         'kode_buku',
         'judul_buku',
         'id_kategori',
+        'id_ddc',
         'jenjang_kelas',
         'kode_ddc',
         'stok',
@@ -27,6 +28,11 @@ class Buku extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'id_kategori');
+    }
+
+    public function ddc()
+    {
+        return $this->belongsTo(Ddc::class, 'id_ddc');
     }
 
     public function detailPeminjaman()
