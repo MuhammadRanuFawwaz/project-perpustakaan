@@ -130,7 +130,7 @@ class PengunjungController extends Controller
 
         return redirect()
             ->route('pengunjung.form')
-            ->with('success', 'Berhasil absen');
+            ->with('success', 'Kunjungan Berhasil disimpan');
     }
     public function store(Request $request)
     {

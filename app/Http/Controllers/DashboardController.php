@@ -13,12 +13,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $statistikJurusan = Pengunjung::join('kelas', 'pengunjung.id_kelas', '=', 'kelas.id')
-            ->select('kelas.jurusan', DB::raw('COUNT(*) as total'))
-            ->whereNotNull('pengunjung.id_kelas')
-            ->groupBy('kelas.jurusan')
-            ->orderByDesc('total')
-            ->get();
+        $periode = request('periode', 'harian');
+
+        $dari = request('dari');
+        $sampai = request('sampai');
+
 
         $aktivitasPengunjung = Pengunjung::latest()
             ->take(5)
@@ -70,23 +69,97 @@ class DashboardController extends Controller
             ->sortByDesc('waktu')
             ->take(8)
             ->values();
+        $queryPengunjung = Pengunjung::query();
+        if ($dari && $sampai) {
+
+            $queryPengunjung->whereBetween(
+                'pengunjung.created_at',
+                [
+                    Carbon::parse($dari)->startOfDay(),
+                    Carbon::parse($sampai)->endOfDay()
+                ]
+            );
+        } else {
+
+            if ($periode == 'harian') {
+
+                $queryPengunjung->whereDate(
+                    'pengunjung.created_at',
+                    today()
+                );
+            } elseif ($periode == 'mingguan') {
+
+                $queryPengunjung->whereBetween(
+                    'pengunjung.created_at',
+                    [
+                        now()->startOfWeek(),
+                        now()->endOfWeek()
+                    ]
+                );
+            } elseif ($periode == 'bulanan') {
+
+                $queryPengunjung->whereMonth(
+                    'pengunjung.created_at',
+                    now()->month
+                );
+            } elseif ($periode == 'tahunan') {
+
+                $queryPengunjung->whereYear(
+                    'pengunjung.created_at',
+                    now()->year
+                );
+            }
+        }
+
+        $totalPengunjung = $queryPengunjung->count();
+        $statistikJurusan = (clone $queryPengunjung)
+            ->join('kelas', 'pengunjung.id_kelas', '=', 'kelas.id')
+            ->select(
+                'kelas.nama_kelas',
+                'kelas.jurusan',
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy(
+                'kelas.nama_kelas',
+                'kelas.jurusan'
+            )
+            ->orderByDesc('total')
+            ->get();
 
         $jatuhTempo = Peminjaman::with([
             'pengunjung',
             'details.buku',
         ])
             ->where('status_peminjaman', 'dipinjam')
-            ->whereDate('batas_pengembalian', '<=', Carbon::now()->addDays(3))
+            ->whereDate('batas_pengembalian', '<=', Carbon::now())
+            ->orderBy('batas_pengembalian', 'asc')
+            ->get();
+
+        $akanJatuhTempo = Peminjaman::with([
+            'pengunjung',
+            'details.buku',
+        ])
+            ->where('status_peminjaman', 'dipinjam')
+            ->whereBetween(
+                'batas_pengembalian',
+                [
+                    Carbon::now(),
+                    Carbon::now()->addDays(3)
+                ]
+            )
             ->orderBy('batas_pengembalian', 'asc')
             ->get();
 
         return view('dashboard', [
-            'total_pengunjung' => Pengunjung::count(),
+            'total_pengunjung' => $totalPengunjung,
             'total_buku' => Buku::count(),
             'total_dipinjam' => DetailPeminjaman::where('status_buku', 'dipinjam')->count(),
             'statistikJurusan' => $statistikJurusan,
-            'aktivitas' => $aktivitas,
+            'aktivitasPengunjung' => $aktivitasPengunjung,
+            'aktivitasBuku' => $aktivitasBuku,
+            'aktivitasPeminjaman' => $aktivitasPeminjaman,
             'jatuhTempo' => $jatuhTempo,
+            'akanJatuhTempo' => $akanJatuhTempo,
         ]);
     }
 }

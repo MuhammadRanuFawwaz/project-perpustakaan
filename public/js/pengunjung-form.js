@@ -36,3 +36,23 @@ document.getElementById('btnCek').addEventListener('click', async () => {
     }
 
 });
+const alert = document.getElementById('success-alert');
+
+if (alert) {
+    setTimeout(() => {
+        alert.style.transition = '0.5s';
+        alert.style.opacity = '0';
+
+        setTimeout(() => {
+            alert.remove();
+        }, 500);
+
+    }, 3000);
+}
+const alertBox = document.getElementById('success-alert');
+
+if (alertBox) {
+    setTimeout(() => {
+        alertBox.classList.add('hide');
+    }, 3000);
+}
