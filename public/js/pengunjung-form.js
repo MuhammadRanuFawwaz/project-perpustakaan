@@ -1,0 +1,38 @@
+document.getElementById('btnCek').addEventListener('click', async () => {
+
+    const nomorInduk = document.querySelector('[name=\"nomor_induk\"]').value;
+
+    if (!nomorInduk) {
+        alert('Masukkan NIS / NIP');
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/pengunjung/lookup?nomor_induk=${nomorInduk}`);
+
+        const result = await response.json();
+
+        if (!result.status) {
+            alert(result.message);
+            return;
+        }
+
+        document.getElementById('status').value =
+            result.data.jenis_pengunjung;
+
+        document.getElementById('nama_pengunjung').value =
+            result.data.nama_pengunjung;
+
+        document.getElementById('kelas').value =
+            result.data.nama_kelas;
+
+        document.getElementById('jurusan').value =
+            result.data.jurusan;
+
+    } catch (error) {
+        alert('Terjadi kesalahan');
+        console.log(error);
+    }
+
+});

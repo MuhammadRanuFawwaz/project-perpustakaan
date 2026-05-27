@@ -98,6 +98,40 @@ class PengunjungController extends Controller
         ]);
     }
 
+    public function formPengunjung()
+    {
+        return view('pengunjung.form');
+    }
+
+    public function storePengunjungMandiri(Request $request)
+    {
+        $request->validate([
+            'nomor_induk' => 'required',
+            'keperluan' => 'required',
+        ]);
+
+        $dataIdentitas = $this->ambilDataIdentitas($request->nomor_induk);
+
+        if (!$dataIdentitas) {
+            return redirect()
+                ->route('pengunjung.form')
+                ->with('error', 'NIS / NIP tidak ditemukan');
+        }
+
+        Pengunjung::create([
+            'nomor_induk' => $dataIdentitas['nomor_induk'],
+            'nama_pengunjung' => $dataIdentitas['nama_pengunjung'],
+            'jenis_pengunjung' => $dataIdentitas['jenis_pengunjung'],
+            'id_kelas' => $dataIdentitas['id_kelas'],
+            'tanggal_kunjung' => now()->toDateString(),
+            'waktu_kunjung' => now()->format('H:i:s'),
+            'keperluan' => $request->keperluan,
+        ]);
+
+        return redirect()
+            ->route('pengunjung.form')
+            ->with('success', 'Berhasil absen');
+    }
     public function store(Request $request)
     {
         $request->validate([

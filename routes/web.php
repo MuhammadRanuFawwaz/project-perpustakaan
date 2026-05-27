@@ -59,7 +59,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengunjung-export', [PengunjungController::class, 'export'])
         ->name('pengunjung.export');
 
-    Route::resource('pengunjung', PengunjungController::class);
+    Route::get('/pengunjung/form', [PengunjungController::class, 'formPengunjung'])
+        ->name('pengunjung.form');
+
+    Route::post('/pengunjung/form', [PengunjungController::class, 'storePengunjungMandiri'])
+        ->name('pengunjung.form.store');
+
+    Route::resource('pengunjung', PengunjungController::class)
+        ->except(['show']);
 
     Route::post('/buku/import', [BukuController::class, 'import'])
         ->name('buku.import');

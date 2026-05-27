@@ -1,0 +1,152 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+
+    background-image: url('/images/form.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    width: 700px;
+    padding: 40px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo {
+    width: 150px;
+    margin-bottom: 15px;
+}
+
+.login-box h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.login-box p {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-col {
+    flex: 1;
+}
+
+.textarea-keperluan {
+    height: 120px;
+    resize: none;
+}
+
+.btn-submit {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn-submit:hover {
+    opacity: 0.9;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.nis-group {
+    display: flex;
+    gap: 15px;
+}
+
+.nis-group .form-control {
+    flex: 1;
+}
+
+.btn-cek {
+    width: 130px;
+}
+
+.footer-text {
+    margin-top: 25px;
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+@media (max-width: 768px) {
+
+    .login-box {
+        width: 95%;
+        padding: 25px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .nis-group {
+        flex-direction: column;
+    }
+
+    .btn-cek {
+        width: 100%;
+    }
+}

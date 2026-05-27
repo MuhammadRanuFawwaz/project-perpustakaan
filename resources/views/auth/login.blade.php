@@ -17,7 +17,7 @@
         <!-- LOGO SEKOLAH -->
         <img src="{{ asset('images/Smkn1Tarumajaya.png') }}" class="logo">
 
-        <h2>Perpustakaan</h2>
+        <h2>PERPUSTAKAAN SMKN 1 TARUMAJAYA</h2>
         <p>Silakan masuk ke akun Anda</p>
 
         <form method="POST" action="{{ route('login') }}">
@@ -25,9 +25,9 @@
 
             <!-- ERROR MESSAGE -->
             @if ($errors->any())
-            <div style="color:red; margin-bottom:10px;">
-                {{ $errors->first() }}
-            </div>
+                <div style="color:red; margin-bottom:10px;">
+                    {{ $errors->first() }}
+                </div>
             @endif
 
             <input type="text" name="email" placeholder="Username atau Email" required>
