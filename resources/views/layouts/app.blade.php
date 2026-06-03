@@ -8,7 +8,10 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Perustakaan SMKN 1 Tarumajaya') }}</title>
+    <link rel="icon"
+        type="image/png"
+        href="{{ asset('images/Smkn1Tarumajaya.png') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

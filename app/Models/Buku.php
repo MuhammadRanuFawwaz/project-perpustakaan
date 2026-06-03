@@ -39,4 +39,9 @@ class Buku extends Model
     {
         return $this->hasMany(DetailPeminjaman::class, 'kode_buku', 'kode_buku');
     }
+
+    public function hargaBuku()
+    {
+        return $this->hasOne(HargaBuku::class, 'kode_buku', 'kode_buku');
+    }
 }

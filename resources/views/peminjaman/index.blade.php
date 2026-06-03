@@ -275,7 +275,9 @@
 
                                     @elseif($detail->status_buku == 'hilang')
 
-                                    <span class="status-hilang">Buku Hilang</span>
+                                    <span class="status-hilang">
+                                        Buku Hilang - Rp {{ number_format($detail->harga_ganti ?? 0, 0, ',', '.') }}
+                                    </span>
 
                                     @else
 

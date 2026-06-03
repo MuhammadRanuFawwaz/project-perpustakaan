@@ -44,6 +44,11 @@
             Master DDC
         </a>
 
+        <a href="{{ route('master.harga-buku.index') }}"
+            class="{{ request()->routeIs('master.harga-buku.*') ? 'active' : '' }}">
+            Master Harga Buku
+        </a>
+
         @endif
 
         <a href="{{ route('pengunjung.index') }}"

@@ -16,7 +16,7 @@ class PeminjamanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Peminjaman::with(['pengunjung.kelas', 'details.buku']);
+        $query = Peminjaman::with(['pengunjung.kelas', 'details.buku.hargaBuku']);
 
         if ($request->start_date) {
             $query->whereDate('tanggal_peminjaman', '>=', $request->start_date);
@@ -241,14 +241,19 @@ class PeminjamanController extends Controller
     {
         DB::transaction(function () use ($id) {
 
-            $detail = DetailPeminjaman::lockForUpdate()->findOrFail($id);
+            $detail = DetailPeminjaman::with('buku.hargaBuku')
+                ->lockForUpdate()
+                ->findOrFail($id);
 
             if ($detail->status_buku !== 'dipinjam') {
                 return;
             }
 
+            $hargaGanti = $detail->buku->hargaBuku->harga ?? 0;
+
             $detail->update([
                 'status_buku' => 'hilang',
+                'harga_ganti' => $hargaGanti,
                 'tanggal_dikembalikan' => now()->toDateString(),
             ]);
 

@@ -11,10 +11,20 @@ use App\Http\Controllers\Master\MuridController;
 use App\Http\Controllers\Master\GuruController;
 use App\Http\Controllers\Master\KategoriController;
 use App\Http\Controllers\Master\DdcController;
+use App\Http\Controllers\Master\HargaBukuController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('pengunjung.form');
 });
+
+Route::get('/pengunjung/lookup', [PengunjungController::class, 'lookup'])
+    ->name('pengunjung.lookup');
+
+Route::get('/pengunjung/form', [PengunjungController::class, 'formPengunjung'])
+    ->name('pengunjung.form');
+
+Route::post('/pengunjung/form', [PengunjungController::class, 'storePengunjungMandiri'])
+    ->name('pengunjung.form.store');
 
 Route::middleware('auth')->group(function () {
 
@@ -25,45 +35,20 @@ Route::middleware('auth')->group(function () {
         ->prefix('master')
         ->name('master.')
         ->group(function () {
-            Route::post('/murid/import', [MuridController::class, 'import'])
-                ->name('murid.import');
-
-            Route::get('/murid/export', [MuridController::class, 'export'])
-                ->name('murid.export');
-
-            Route::post('/murid/luluskan', [MuridController::class, 'luluskan'])
-                ->name('murid.luluskan');
-
-            Route::resource('murid', MuridController::class)
-                ->except(['show', 'create']);
-
-            Route::post('/guru/import', [GuruController::class, 'import'])
-                ->name('guru.import');
-
-            Route::get('/guru/export', [GuruController::class, 'export'])
-                ->name('guru.export');
-
-            Route::resource('guru', GuruController::class)
-                ->except(['show', 'create']);
-
-            Route::resource('kategori', KategoriController::class)
-                ->except(['show', 'create', 'edit']);
-
-            Route::resource('ddc', DdcController::class)
-                ->except(['show', 'create', 'edit']);
+            Route::post('/murid/import', [MuridController::class, 'import'])->name('murid.import');
+            Route::get('/murid/export', [MuridController::class, 'export'])->name('murid.export');
+            Route::post('/murid/luluskan', [MuridController::class, 'luluskan'])->name('murid.luluskan');
+            Route::resource('murid', MuridController::class)->except(['show', 'create']);
+            Route::post('/guru/import', [GuruController::class, 'import'])->name('guru.import');
+            Route::get('/guru/export', [GuruController::class, 'export'])->name('guru.export');
+            Route::resource('guru', GuruController::class)->except(['show', 'create']);
+            Route::resource('kategori', KategoriController::class)->except(['show', 'create', 'edit']);
+            Route::resource('ddc', DdcController::class)->except(['show', 'create', 'edit']);
+            Route::resource('harga-buku', HargaBukuController::class)->except(['show', 'create', 'edit']);
         });
-
-    Route::get('/pengunjung/lookup', [PengunjungController::class, 'lookup'])
-        ->name('pengunjung.lookup');
 
     Route::get('/pengunjung-export', [PengunjungController::class, 'export'])
         ->name('pengunjung.export');
-
-    Route::get('/pengunjung/form', [PengunjungController::class, 'formPengunjung'])
-        ->name('pengunjung.form');
-
-    Route::post('/pengunjung/form', [PengunjungController::class, 'storePengunjungMandiri'])
-        ->name('pengunjung.form.store');
 
     Route::resource('pengunjung', PengunjungController::class)
         ->except(['show']);

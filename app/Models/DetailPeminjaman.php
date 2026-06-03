@@ -12,6 +12,7 @@ class DetailPeminjaman extends Model
         'id_peminjaman',
         'kode_buku',
         'status_buku',
+        'harga_ganti',
         'tanggal_dikembalikan',
     ];
 
