@@ -36,7 +36,8 @@
                                     Minggu Ini
                                 </option>
 
-                                <option value="bulan_ini" {{ request('periode', 'bulan_ini') == 'bulan_ini' ? 'selected' : '' }}>
+                                <option value="bulan_ini"
+                                    {{ request('periode', 'bulan_ini') == 'bulan_ini' ? 'selected' : '' }}>
                                     Bulan Ini
                                 </option>
 
@@ -79,7 +80,7 @@
             <div class="cards">
 
                 <div class="card">
-                    <div class="card-icon">👤</div>
+                    <div class="card-icon"> <img src="{{ asset('icon/pengunjung.png') }}"></div>
 
                     <div>
                         <div class="card-title">PENGUNJUNG</div>
@@ -88,7 +89,7 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-icon">📚</div>
+                    <div class="card-icon"><img src="{{ asset('icon/book.png') }}"></div>
 
                     <div>
                         <div class="card-title">BUKU</div>
@@ -97,7 +98,7 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-icon">📄</div>
+                    <div class="card-icon"><img src="{{ asset('icon/pinjam.png') }}"></div>
 
                     <div>
                         <div class="card-title">DIPINJAM</div>
@@ -114,32 +115,32 @@
                 </div>
 
                 @php
-                $maxTotal = $statistikJurusan->max('total') ?: 1;
+                    $maxTotal = $statistikJurusan->max('total') ?: 1;
                 @endphp
 
                 @forelse($statistikJurusan as $s)
-                @php
-                $persen = ($s->total / $maxTotal) * 100;
-                @endphp
+                    @php
+                        $persen = ($s->total / $maxTotal) * 100;
+                    @endphp
 
-                <div class="stat-item">
+                    <div class="stat-item">
 
-                    <div class="stat-info">
-                        <strong>
-                            {{ $s->nama_kelas }} - {{ $s->jurusan }}
-                        </strong>
-                        <span>{{ $s->total }} kunjungan</span>
+                        <div class="stat-info">
+                            <strong>
+                                {{ $s->nama_kelas }} - {{ $s->jurusan }}
+                            </strong>
+                            <span>{{ $s->total }} kunjungan</span>
+                        </div>
+
+                        <div class="stat-bar">
+                            <div class="stat-fill" data-width="{{ $persen }}"></div>
+                        </div>
+
                     </div>
-
-                    <div class="stat-bar">
-                        <div class="stat-fill" data-width="{{ $persen }}"></div>
-                    </div>
-
-                </div>
 
                 @empty
 
-                <p>Belum ada data statistik.</p>
+                    <p>Belum ada data statistik.</p>
                 @endforelse
 
             </div>
@@ -172,25 +173,25 @@
                     <div id="aktivitasPengunjung" class="activity-list">
 
                         @forelse($aktivitasPengunjung as $a)
-                        <div class="activity-item">
+                            <div class="activity-item">
 
-                            <strong>{{ $a['judul'] }}</strong>
+                                <strong>{{ $a['judul'] }}</strong>
 
-                            <br>
+                                <br>
 
-                            <span>{{ $a['deskripsi'] }}</span>
+                                <span>{{ $a['deskripsi'] }}</span>
 
-                            <br>
+                                <br>
 
-                            <small>
-                                {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
-                            </small>
+                                <small>
+                                    {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
+                                </small>
 
-                        </div>
+                            </div>
 
                         @empty
 
-                        <p>Tidak ada aktivitas pengunjung.</p>
+                            <p>Tidak ada aktivitas pengunjung.</p>
                         @endforelse
 
                     </div>
@@ -199,25 +200,25 @@
                     <div id="aktivitasBuku" class="activity-list" style="display:none;">
 
                         @forelse($aktivitasBuku as $a)
-                        <div class="activity-item">
+                            <div class="activity-item">
 
-                            <strong>{{ $a['judul'] }}</strong>
+                                <strong>{{ $a['judul'] }}</strong>
 
-                            <br>
+                                <br>
 
-                            <span>{{ $a['deskripsi'] }}</span>
+                                <span>{{ $a['deskripsi'] }}</span>
 
-                            <br>
+                                <br>
 
-                            <small>
-                                {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
-                            </small>
+                                <small>
+                                    {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
+                                </small>
 
-                        </div>
+                            </div>
 
                         @empty
 
-                        <p>Tidak ada aktivitas buku.</p>
+                            <p>Tidak ada aktivitas buku.</p>
                         @endforelse
 
                     </div>
@@ -226,25 +227,25 @@
                     <div id="aktivitasPeminjaman" class="activity-list" style="display:none;">
 
                         @forelse($aktivitasPeminjaman as $a)
-                        <div class="activity-item">
+                            <div class="activity-item">
 
-                            <strong>{{ $a['judul'] }}</strong>
+                                <strong>{{ $a['judul'] }}</strong>
 
-                            <br>
+                                <br>
 
-                            <span>{{ $a['deskripsi'] }}</span>
+                                <span>{{ $a['deskripsi'] }}</span>
 
-                            <br>
+                                <br>
 
-                            <small>
-                                {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
-                            </small>
+                                <small>
+                                    {{ \Carbon\Carbon::parse($a['waktu'])->format('d/m/Y H:i') }}
+                                </small>
 
-                        </div>
+                            </div>
 
                         @empty
 
-                        <p>Tidak ada aktivitas peminjaman.</p>
+                            <p>Tidak ada aktivitas peminjaman.</p>
                         @endforelse
 
                     </div>
@@ -271,37 +272,37 @@
 
                         @forelse($jatuhTempo as $j)
 
-                        <div class="warning-item warning-danger">
+                            <div class="warning-item warning-danger">
 
-                            <strong>
-                                {{ $j->pengunjung->nama_pengunjung ?? '-' }}
-                            </strong>
+                                <strong>
+                                    {{ $j->pengunjung->nama_pengunjung ?? '-' }}
+                                </strong>
 
-                            <br>
+                                <br>
 
-                            <small>
-                                Batas kembali:
-                                {{ $j->batas_pengembalian ? \Carbon\Carbon::parse($j->batas_pengembalian)->format('d-m-Y') : '-' }}
-                            </small>
+                                <small>
+                                    Batas kembali:
+                                    {{ $j->batas_pengembalian ? \Carbon\Carbon::parse($j->batas_pengembalian)->format('d-m-Y') : '-' }}
+                                </small>
 
-                            <br>
+                                <br>
 
-                            <span>
-                                Buku:
-                                @foreach ($j->details->where('status_buku', 'dipinjam') as $detail)
-                                {{ $detail->buku->judul_buku ?? $detail->kode_buku }}
+                                <span>
+                                    Buku:
+                                    @foreach ($j->details->where('status_buku', 'dipinjam') as $detail)
+                                        {{ $detail->buku->judul_buku ?? $detail->kode_buku }}
 
-                                @if (!$loop->last)
-                                ,
-                                @endif
-                                @endforeach
-                            </span>
+                                        @if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </span>
 
-                        </div>
+                            </div>
 
                         @empty
 
-                        <p>Tidak ada buku yang jatuh tempo.</p>
+                            <p>Tidak ada buku yang jatuh tempo.</p>
 
                         @endforelse
 
@@ -311,37 +312,37 @@
 
                         @forelse($akanJatuhTempo as $j)
 
-                        <div class="warning-item warning-warning">
+                            <div class="warning-item warning-warning">
 
-                            <strong>
-                                {{ $j->pengunjung->nama_pengunjung ?? '-' }}
-                            </strong>
+                                <strong>
+                                    {{ $j->pengunjung->nama_pengunjung ?? '-' }}
+                                </strong>
 
-                            <br>
+                                <br>
 
-                            <small>
-                                Akan jatuh tempo:
-                                {{ $j->batas_pengembalian ? \Carbon\Carbon::parse($j->batas_pengembalian)->format('d-m-Y') : '-' }}
-                            </small>
+                                <small>
+                                    Akan jatuh tempo:
+                                    {{ $j->batas_pengembalian ? \Carbon\Carbon::parse($j->batas_pengembalian)->format('d-m-Y') : '-' }}
+                                </small>
 
-                            <br>
+                                <br>
 
-                            <span>
-                                Buku:
-                                @foreach ($j->details->where('status_buku', 'dipinjam') as $detail)
-                                {{ $detail->buku->judul_buku ?? $detail->kode_buku }}
+                                <span>
+                                    Buku:
+                                    @foreach ($j->details->where('status_buku', 'dipinjam') as $detail)
+                                        {{ $detail->buku->judul_buku ?? $detail->kode_buku }}
 
-                                @if (!$loop->last)
-                                ,
-                                @endif
-                                @endforeach
-                            </span>
+                                        @if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </span>
 
-                        </div>
+                            </div>
 
                         @empty
 
-                        <p>Tidak ada buku yang akan jatuh tempo.</p>
+                            <p>Tidak ada buku yang akan jatuh tempo.</p>
 
                         @endforelse
 
