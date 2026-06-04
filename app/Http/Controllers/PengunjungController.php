@@ -118,6 +118,16 @@ class PengunjungController extends Controller
                 ->with('error', 'NIS / NIP tidak ditemukan');
         }
 
+        $sudahBerkunjungHariIni = Pengunjung::where('nomor_induk', $dataIdentitas['nomor_induk'])
+            ->whereDate('tanggal_kunjung', now()->toDateString())
+            ->exists();
+
+        if ($sudahBerkunjungHariIni) {
+            return redirect()
+                ->route('pengunjung.form')
+                ->with('error', 'NIS / NIP ini sudah melakukan kunjungan hari ini.');
+        }
+
         Pengunjung::create([
             'nomor_induk' => $dataIdentitas['nomor_induk'],
             'nama_pengunjung' => $dataIdentitas['nama_pengunjung'],
@@ -132,6 +142,7 @@ class PengunjungController extends Controller
             ->route('pengunjung.form')
             ->with('success', 'Kunjungan Berhasil disimpan');
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -147,15 +158,14 @@ class PengunjungController extends Controller
                 ->with('error', 'NIS / NIP tidak ditemukan di data master.');
         }
 
-        $sudahAbsen = Pengunjung::where('nomor_induk', $dataIdentitas['nomor_induk'])
+        $sudahBerkunjungHariIni = Pengunjung::where('nomor_induk', $dataIdentitas['nomor_induk'])
             ->whereDate('tanggal_kunjung', now()->toDateString())
-            ->whereTime('waktu_kunjung', '>=', now()->subMinutes(5)->format('H:i:s'))
             ->exists();
 
-        if ($sudahAbsen) {
+        if ($sudahBerkunjungHariIni) {
             return redirect()
                 ->route('pengunjung.index')
-                ->with('error', 'Pengunjung ini sudah melakukan kunjungan dalam 5 menit terakhir.');
+                ->with('error', 'NIS / NIP ini sudah melakukan kunjungan hari ini.');
         }
 
         Pengunjung::create([

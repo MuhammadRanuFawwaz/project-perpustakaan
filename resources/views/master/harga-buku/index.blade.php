@@ -223,10 +223,9 @@
 
                     <label>Buku</label>
 
-                    <select name="kode_buku" id="kode_buku_harga" required>
+                    <select name="kode_buku" id="kode_buku_harga" class="select2-modal" required>
                         <option value="">-- Pilih Buku --</option>
-
-                        @foreach($semuaBuku as $b)
+                        @foreach($buku as $b)
                         <option value="{{ $b->kode_buku }}">
                             {{ $b->kode_buku }} - {{ $b->judul_buku }}
                         </option>
@@ -261,7 +260,12 @@
 
     @include('profile.modal')
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script src="{{ asset('js/master-harga-buku.js') }}"></script>
     <script src="{{ asset('js/app-layout.js') }}"></script>
-
 </x-app-layout>

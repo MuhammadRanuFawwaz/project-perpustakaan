@@ -67,24 +67,24 @@ class PeminjamanController extends Controller
 
         $buku = Buku::with('kategori')
             ->orderByRaw("
-        CASE
-            WHEN jenjang_kelas = 'X' THEN 1
-            WHEN jenjang_kelas = 'XI' THEN 2
-            WHEN jenjang_kelas = 'XII' THEN 3
-            ELSE 4
-        END
-    ")
+                CASE
+                    WHEN jenjang_kelas = 'X' THEN 1
+                    WHEN jenjang_kelas = 'XI' THEN 2
+                    WHEN jenjang_kelas = 'XII' THEN 3
+                    ELSE 4
+                END
+            ")
             ->orderBy('judul_buku')
             ->get();
 
         $kelas = Kelas::orderByRaw("
-        CASE
-            WHEN nama_kelas LIKE 'XII-%' THEN 3
-            WHEN nama_kelas LIKE 'XI-%' THEN 2
-            WHEN nama_kelas LIKE 'X-%' THEN 1
-            ELSE 4
-        END
-    ")
+                CASE
+                    WHEN nama_kelas LIKE 'XII-%' THEN 3
+                    WHEN nama_kelas LIKE 'XI-%' THEN 2
+                    WHEN nama_kelas LIKE 'X-%' THEN 1
+                    ELSE 4
+                END
+            ")
             ->orderBy('nama_kelas')
             ->orderBy('jurusan')
             ->get();
@@ -118,7 +118,6 @@ class PeminjamanController extends Controller
 
         try {
             DB::transaction(function () use ($request, $kodeBuku) {
-
                 $peminjaman = Peminjaman::create([
                     'id_pengunjung' => $request->id_pengunjung,
                     'tanggal_peminjaman' => $request->tanggal_peminjaman,
@@ -128,7 +127,6 @@ class PeminjamanController extends Controller
                 ]);
 
                 foreach ($kodeBuku as $kode) {
-
                     $buku = Buku::where('kode_buku', $kode)
                         ->lockForUpdate()
                         ->firstOrFail();
@@ -181,7 +179,6 @@ class PeminjamanController extends Controller
     public function destroy($id)
     {
         DB::transaction(function () use ($id) {
-
             $peminjaman = Peminjaman::with('details')->findOrFail($id);
 
             foreach ($peminjaman->details as $detail) {
@@ -202,7 +199,6 @@ class PeminjamanController extends Controller
     public function kembali($id)
     {
         DB::transaction(function () use ($id) {
-
             $detail = DetailPeminjaman::lockForUpdate()->findOrFail($id);
 
             if ($detail->status_buku === 'kembali') {
@@ -223,8 +219,12 @@ class PeminjamanController extends Controller
                 ->exists();
 
             if (! $masihDipinjam) {
+                $adaBukuHilang = $peminjaman->details()
+                    ->where('status_buku', 'hilang')
+                    ->exists();
+
                 $peminjaman->update([
-                    'status_peminjaman' => 'kembali',
+                    'status_peminjaman' => $adaBukuHilang ? 'hilang' : 'kembali',
                     'tanggal_pengembalian' => now()->toDateString(),
                 ]);
             }
@@ -240,7 +240,6 @@ class PeminjamanController extends Controller
     public function hilang($id)
     {
         DB::transaction(function () use ($id) {
-
             $detail = DetailPeminjaman::with('buku.hargaBuku')
                 ->lockForUpdate()
                 ->findOrFail($id);
@@ -265,7 +264,7 @@ class PeminjamanController extends Controller
 
             if (! $masihDipinjam) {
                 $peminjaman->update([
-                    'status_peminjaman' => 'kembali',
+                    'status_peminjaman' => 'hilang',
                     'tanggal_pengembalian' => now()->toDateString(),
                 ]);
             }

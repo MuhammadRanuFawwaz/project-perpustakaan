@@ -68,6 +68,7 @@
                                     <option value="">Semua Status</option>
                                     <option value="dipinjam" {{ request('status_peminjaman') == 'dipinjam' ? 'selected' : '' }}>Dipinjam</option>
                                     <option value="kembali" {{ request('status_peminjaman') == 'kembali' ? 'selected' : '' }}>Kembali</option>
+                                    <option value="hilang" {{ request('status_peminjaman') == 'hilang' ? 'selected' : '' }}>Hilang</option>
                                 </select>
                             </div>
 
@@ -200,9 +201,27 @@
                                 </td>
 
                                 <td>
-                                    <span class="{{ $p->status_peminjaman == 'dipinjam' ? 'status-dipinjam' : 'status-kembali' }}">
-                                        {{ ucfirst($p->status_peminjaman) }}
+
+                                    @if($p->status_peminjaman == 'dipinjam')
+
+                                    <span class="status-dipinjam">
+                                        Dipinjam
                                     </span>
+
+                                    @elseif($p->status_peminjaman == 'hilang')
+
+                                    <span class="status-hilang">
+                                        Hilang
+                                    </span>
+
+                                    @else
+
+                                    <span class="status-kembali">
+                                        Kembali
+                                    </span>
+
+                                    @endif
+
                                 </td>
                             </tr>
                             @empty
