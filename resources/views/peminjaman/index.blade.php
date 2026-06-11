@@ -132,7 +132,9 @@
                     <table>
                         <thead>
                             <tr>
+                                @if(auth()->user()->canEditPeminjaman() || auth()->user()->canDeletePeminjaman())
                                 <th>Action</th>
+                                @endif
                                 <th>Nama Peminjam</th>
                                 <th>Jenis</th>
                                 <th>Kelas</th>
@@ -146,7 +148,10 @@
                         <tbody>
                             @forelse($peminjaman as $p)
                             <tr>
+                                @if(auth()->user()->canEditPeminjaman() || auth()->user()->canDeletePeminjaman())
                                 <td class="action-column">
+
+                                    @if(auth()->user()->canEditPeminjaman())
                                     <button type="button"
                                         class="edit-btn"
                                         data-id="{{ $p->id }}"
@@ -156,15 +161,23 @@
                                         onclick="openEditModalFromButton(this)">
                                         Edit
                                     </button>
+                                    @endif
 
+                                    @if(auth()->user()->canDeletePeminjaman())
                                     <form action="{{ route('peminjaman.destroy', $p->id) }}"
                                         method="POST"
                                         onsubmit="return confirm('Yakin hapus data peminjaman ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="delete-btn">Hapus</button>
+
+                                        <button type="submit" class="delete-btn">
+                                            Hapus
+                                        </button>
                                     </form>
+                                    @endif
+
                                 </td>
+                                @endif
 
                                 <td>{{ $p->pengunjung->nama_pengunjung ?? '-' }}</td>
                                 <td>{{ $p->pengunjung->jenis_pengunjung ?? '-' }}</td>

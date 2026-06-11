@@ -209,6 +209,21 @@
 
                         </form>
 
+                        <form method="POST"
+                            action="{{ route('master.murid.naik-kelas') }}">
+
+                            @csrf
+
+                            <button type="submit"
+                                class="delete-btn"
+                                onclick="return confirm('Yakin naikkan kelas semua murid aktif? XII akan diluluskan, XI naik ke XII, dan X naik ke XI.')">
+
+                                Naik Kelas Massal
+
+                            </button>
+
+                        </form>
+
                     </div>
 
                 </div>

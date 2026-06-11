@@ -11,6 +11,7 @@ use App\Models\Pengunjung;
 use App\Models\Kelas;
 use App\Exports\PeminjamanExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class PeminjamanController extends Controller
 {
@@ -159,6 +160,13 @@ class PeminjamanController extends Controller
 
     public function update(Request $request, $id)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (! $user->canEditPeminjaman()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengedit transaksi peminjaman.');
+        }
+
         $request->validate([
             'id_pengunjung' => 'required|exists:pengunjung,id',
             'tanggal_peminjaman' => 'required|date',
@@ -178,6 +186,13 @@ class PeminjamanController extends Controller
 
     public function destroy($id)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (! $user->canDeletePeminjaman()) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus transaksi peminjaman.');
+        }
+
         DB::transaction(function () use ($id) {
             $peminjaman = Peminjaman::with('details')->findOrFail($id);
 

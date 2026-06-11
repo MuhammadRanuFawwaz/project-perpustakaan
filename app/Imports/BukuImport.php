@@ -29,12 +29,17 @@ class BukuImport
                 continue;
             }
 
+            $kolom = $this->ambilKolomHeader($sheet, $headerRow);
+
             for ($row = $headerRow + 1; $row <= $sheet->getHighestRow(); $row++) {
 
-                $judul = trim((string) $sheet->getCell('B' . $row)->getValue());
-                $jenjang = trim((string) $sheet->getCell('C' . $row)->getValue());
-                $stok = trim((string) $sheet->getCell('D' . $row)->getValue());
-                $tanggal = trim((string) $sheet->getCell('E' . $row)->getValue());
+                $kodeBukuExcel = $this->ambilNilai($sheet, $kolom, 'kode_buku', $row);
+                $judul = $this->ambilNilai($sheet, $kolom, 'judul_buku', $row);
+                $kategoriExcel = $this->ambilNilai($sheet, $kolom, 'kategori', $row);
+                $jenjang = $this->ambilNilai($sheet, $kolom, 'jenjang', $row);
+                $kodeDdcExcel = $this->ambilNilai($sheet, $kolom, 'ddc', $row);
+                $stok = $this->ambilNilai($sheet, $kolom, 'stok', $row);
+                $tanggal = $this->ambilNilai($sheet, $kolom, 'tanggal_kirim', $row);
 
                 if (!$this->validJudul($judul)) {
                     $dilewati++;
@@ -57,31 +62,46 @@ class BukuImport
 
                 $jenjang = $this->normalisasiJenjang($jenjang);
 
-                $namaKategori = $this->tebakKategori($judul, $jenjang);
+                $namaKategori = $kategoriExcel
+                    ? $this->normalisasiKategori($kategoriExcel)
+                    : $this->tebakKategori($judul, $jenjang);
 
                 $kategori = Kategori::firstOrCreate([
                     'nama_kategori' => $namaKategori,
                 ]);
 
-                $kodeDdc = $this->tebakKodeDdc($judul, $namaKategori);
+                $kodeDdc = $kodeDdcExcel
+                    ? trim((string) $kodeDdcExcel)
+                    : $this->tebakKodeDdc($judul, $namaKategori);
 
-                $existing = Buku::where('judul_buku', strtoupper($judul))
-                    ->where('jenjang_kelas', $jenjang)
-                    ->whereDate('tanggal_kirim', $tanggalKirim)
-                    ->first();
+                $existing = null;
+
+                if ($kodeBukuExcel) {
+                    $existing = Buku::where('kode_buku', trim((string) $kodeBukuExcel))->first();
+                }
+
+                if (!$existing) {
+                    $existing = Buku::where('judul_buku', strtoupper($judul))
+                        ->where('jenjang_kelas', $jenjang)
+                        ->whereDate('tanggal_kirim', $tanggalKirim)
+                        ->first();
+                }
 
                 if ($existing) {
                     $existing->update([
+                        'judul_buku' => strtoupper($judul),
                         'id_kategori' => $kategori->id,
+                        'jenjang_kelas' => $jenjang,
                         'kode_ddc' => $kodeDdc,
                         'stok' => $stok,
+                        'tanggal_kirim' => $tanggalKirim,
                     ]);
 
                     $update++;
                     continue;
                 }
 
-                $kodeBuku = $this->generateKodeBuku(
+                $kodeBuku = $kodeBukuExcel ?: $this->generateKodeBuku(
                     $kodeDdc,
                     $kategori->nama_kategori,
                     $jenjang
@@ -111,16 +131,71 @@ class BukuImport
     private function cariBarisHeader($sheet)
     {
         for ($row = 1; $row <= 20; $row++) {
-            for ($col = 1; $col <= 8; $col++) {
+            for ($col = 1; $col <= 10; $col++) {
                 $value = strtoupper(trim((string) $sheet->getCellByColumnAndRow($col, $row)->getValue()));
 
-                if (str_contains($value, 'NAMA BUKU')) {
+                if (
+                    str_contains($value, 'NAMA BUKU') ||
+                    str_contains($value, 'JUDUL BUKU')
+                ) {
                     return $row;
                 }
             }
         }
 
         return null;
+    }
+
+    private function ambilKolomHeader($sheet, $headerRow)
+    {
+        $kolom = [];
+
+        for ($col = 1; $col <= 10; $col++) {
+            $value = strtoupper(trim((string) $sheet->getCellByColumnAndRow($col, $headerRow)->getValue()));
+
+            if (!$value) {
+                continue;
+            }
+
+            if (str_contains($value, 'KODE BUKU')) {
+                $kolom['kode_buku'] = $col;
+            }
+
+            if (str_contains($value, 'NAMA BUKU') || str_contains($value, 'JUDUL BUKU')) {
+                $kolom['judul_buku'] = $col;
+            }
+
+            if (str_contains($value, 'KATEGORI')) {
+                $kolom['kategori'] = $col;
+            }
+
+            if (str_contains($value, 'JENJANG') || str_contains($value, 'KELAS')) {
+                $kolom['jenjang'] = $col;
+            }
+
+            if (str_contains($value, 'DDC')) {
+                $kolom['ddc'] = $col;
+            }
+
+            if (str_contains($value, 'STOK')) {
+                $kolom['stok'] = $col;
+            }
+
+            if (str_contains($value, 'TANGGAL')) {
+                $kolom['tanggal_kirim'] = $col;
+            }
+        }
+
+        return $kolom;
+    }
+
+    private function ambilNilai($sheet, $kolom, $key, $row)
+    {
+        if (!isset($kolom[$key])) {
+            return null;
+        }
+
+        return trim((string) $sheet->getCellByColumnAndRow($kolom[$key], $row)->getValue());
     }
 
     private function validJudul($judul)
@@ -135,6 +210,10 @@ class BukuImport
             return false;
         }
 
+        if (str_contains($judul, 'JUDUL BUKU')) {
+            return false;
+        }
+
         if ($judul === 'TOTAL') {
             return false;
         }
@@ -145,7 +224,6 @@ class BukuImport
     private function bersihkanStok($stok)
     {
         $stok = strtolower((string) $stok);
-
         $stok = str_replace('buku', '', $stok);
 
         preg_match('/[0-9]+/', $stok, $match);
@@ -240,15 +318,95 @@ class BukuImport
         return 'Umum';
     }
 
+    private function normalisasiKategori($kategori)
+    {
+        $kategori = trim((string) $kategori);
+        $kategoriUpper = strtoupper($kategori);
+
+        if (str_contains($kategoriUpper, 'KENDARAAN') || str_contains($kategoriUpper, 'TKR')) {
+            return 'Teknik Kendaraan Ringan';
+        }
+
+        if (str_contains($kategoriUpper, 'KIMIA')) {
+            return 'Teknik Kimia Industri';
+        }
+
+        if (str_contains($kategoriUpper, 'KOMPUTER') || str_contains($kategoriUpper, 'JARINGAN') || str_contains($kategoriUpper, 'TKJ')) {
+            return 'Teknik Komputer dan Jaringan';
+        }
+
+        if (str_contains($kategoriUpper, 'MESIN') || str_contains($kategoriUpper, 'MEKANIK')) {
+            return 'Teknik Pemeliharaan Mesin Industri';
+        }
+
+        if (str_contains($kategoriUpper, 'UMUM')) {
+            return 'Umum';
+        }
+
+        return $kategori;
+    }
+
     private function tebakKategori($judul, $jenjang)
     {
         $judul = strtoupper($judul);
 
-        if (str_contains($judul, 'NOVEL') || str_contains($jenjang, 'NOVEL')) {
-            return 'Novel';
+        if (
+            str_contains($judul, 'MATEMATIKA') ||
+            str_contains($judul, 'BAHASA INDONESIA') ||
+            str_contains($judul, 'BAHASA INGGRIS') ||
+            str_contains($judul, 'ENGLISH') ||
+            str_contains($judul, 'PENDIDIKAN AGAMA') ||
+            str_contains($judul, 'AGAMA') ||
+            str_contains($judul, 'ISLAM') ||
+            str_contains($judul, 'PANCASILA') ||
+            str_contains($judul, 'PPKN') ||
+            str_contains($judul, 'SEJARAH') ||
+            str_contains($judul, 'PJOK') ||
+            str_contains($judul, 'SENI BUDAYA') ||
+            str_contains($judul, 'PRODUK KREATIF') ||
+            str_contains($judul, 'KEWIRAUSAHAAN')
+        ) {
+            return 'Umum';
         }
 
-        return 'Pelajaran';
+        if (
+            str_contains($judul, 'KIMIA') ||
+            str_contains($judul, 'LABORATORIUM KIMIA') ||
+            str_contains($judul, 'PROSES INDUSTRI KIMIA')
+        ) {
+            return 'Teknik Kimia Industri';
+        }
+
+        if (
+            str_contains($judul, 'KOMPUTER') ||
+            str_contains($judul, 'JARINGAN') ||
+            str_contains($judul, 'TELEKOMUNIKASI') ||
+            str_contains($judul, 'INFORMATIKA') ||
+            str_contains($judul, 'DESAIN GRAFIS')
+        ) {
+            return 'Teknik Komputer dan Jaringan';
+        }
+
+        if (
+            str_contains($judul, 'KENDARAAN') ||
+            str_contains($judul, 'OTOMOTIF') ||
+            str_contains($judul, 'ENGINE') ||
+            str_contains($judul, 'CHASIS') ||
+            str_contains($judul, 'PEMINDAH TENAGA')
+        ) {
+            return 'Teknik Kendaraan Ringan';
+        }
+
+        if (
+            str_contains($judul, 'MESIN') ||
+            str_contains($judul, 'MEKANIK') ||
+            str_contains($judul, 'SISTEM KONTROL') ||
+            str_contains($judul, 'PEMELIHARAAN')
+        ) {
+            return 'Teknik Pemeliharaan Mesin Industri';
+        }
+
+        return 'Umum';
     }
 
     private function tebakKodeDdc($judul, $kategori)
@@ -325,7 +483,6 @@ class BukuImport
     private function generateKodeBuku($kodeDdc, $namaKategori, $jenjangKelas)
     {
         $singkatan = $this->buatSingkatanKategori($namaKategori);
-
         $jenjang = $jenjangKelas ?: 'UMUM';
 
         $prefix = $kodeDdc . '-' . $singkatan . '-' . $jenjang;
@@ -348,36 +505,24 @@ class BukuImport
     {
         $nama = strtoupper($namaKategori);
 
-        if (str_contains($nama, 'AGAMA')) {
-            return 'PAI';
+        if (str_contains($nama, 'KENDARAAN') || str_contains($nama, 'TKR')) {
+            return 'TKR';
         }
 
-        if (str_contains($nama, 'BAHASA')) {
-            return 'BHS';
+        if (str_contains($nama, 'KIMIA')) {
+            return 'TKI';
         }
 
-        if (str_contains($nama, 'MATEMATIKA')) {
-            return 'MTK';
+        if (str_contains($nama, 'KOMPUTER') || str_contains($nama, 'JARINGAN') || str_contains($nama, 'TKJ')) {
+            return 'TKJ';
         }
 
-        if (str_contains($nama, 'IPA') || str_contains($nama, 'FISIKA') || str_contains($nama, 'KIMIA') || str_contains($nama, 'BIOLOGI')) {
-            return 'IPA';
+        if (str_contains($nama, 'MESIN') || str_contains($nama, 'MEKANIK')) {
+            return 'TMI';
         }
 
-        if (str_contains($nama, 'IPS') || str_contains($nama, 'SOSIAL') || str_contains($nama, 'PANCASILA') || str_contains($nama, 'PPKN')) {
-            return 'SOS';
-        }
-
-        if (str_contains($nama, 'SEJARAH')) {
-            return 'SEJ';
-        }
-
-        if (str_contains($nama, 'NOVEL') || str_contains($nama, 'SASTRA')) {
-            return 'SAS';
-        }
-
-        if (str_contains($nama, 'TEKNIK') || str_contains($nama, 'TKR') || str_contains($nama, 'JARINGAN') || str_contains($nama, 'KOMPUTER')) {
-            return 'TEK';
+        if (str_contains($nama, 'UMUM')) {
+            return 'UMM';
         }
 
         return strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $namaKategori), 0, 3));

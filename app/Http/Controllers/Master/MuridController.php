@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Murid;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use App\Exports\MuridExport;
 use App\Imports\MuridImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -202,6 +202,74 @@ class MuridController extends Controller
             ->with('success', 'Semua murid kelas XII berhasil diluluskan.');
     }
 
+    public function naikKelas()
+    {
+        $hasil = DB::transaction(function () {
+            $totalXiiLulus = Murid::where('status', 'aktif')
+                ->whereHas('kelas', function ($q) {
+                    $q->where('nama_kelas', 'like', 'XII-%');
+                })
+                ->update([
+                    'status' => 'lulus',
+                ]);
+
+            $totalXiNaik = $this->naikkanTingkat('XI', 'XII');
+
+            $totalXNaik = $this->naikkanTingkat('X', 'XI');
+
+            return [
+                'xii_lulus' => $totalXiiLulus,
+                'xi_naik' => $totalXiNaik,
+                'x_naik' => $totalXNaik,
+            ];
+        });
+
+        return redirect()
+            ->route('master.murid.index')
+            ->with(
+                'success',
+                'Naik kelas massal berhasil. ' .
+                    'X ke XI: ' . $hasil['x_naik'] . ' murid. ' .
+                    'XI ke XII: ' . $hasil['xi_naik'] . ' murid. ' .
+                    'XII lulus: ' . $hasil['xii_lulus'] . ' murid.'
+            );
+    }
+
+    private function naikkanTingkat(string $dari, string $ke): int
+    {
+        $totalNaik = 0;
+
+        $murid = Murid::with('kelas')
+            ->where('status', 'aktif')
+            ->whereHas('kelas', function ($q) use ($dari) {
+                $q->where('nama_kelas', 'like', $dari . '-%');
+            })
+            ->get();
+
+        foreach ($murid as $m) {
+            if (! $m->kelas) {
+                continue;
+            }
+
+            $rombel = str_replace($dari . '-', '', $m->kelas->nama_kelas);
+
+            $kelasTujuan = Kelas::where('nama_kelas', $ke . '-' . $rombel)
+                ->where('jurusan', $m->kelas->jurusan)
+                ->first();
+
+            if (! $kelasTujuan) {
+                continue;
+            }
+
+            $m->update([
+                'id_kelas' => $kelasTujuan->id,
+            ]);
+
+            $totalNaik++;
+        }
+
+        return $totalNaik;
+    }
     private function ambilKelas()
     {
         return Kelas::orderByRaw("

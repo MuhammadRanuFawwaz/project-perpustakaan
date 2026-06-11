@@ -12,6 +12,7 @@ use App\Http\Controllers\Master\GuruController;
 use App\Http\Controllers\Master\KategoriController;
 use App\Http\Controllers\Master\DdcController;
 use App\Http\Controllers\Master\HargaBukuController;
+use App\Http\Controllers\Master\AksesAdminController;
 
 Route::get('/', function () {
     return redirect()->route('pengunjung.form');
@@ -38,13 +39,21 @@ Route::middleware('auth')->group(function () {
             Route::post('/murid/import', [MuridController::class, 'import'])->name('murid.import');
             Route::get('/murid/export', [MuridController::class, 'export'])->name('murid.export');
             Route::post('/murid/luluskan', [MuridController::class, 'luluskan'])->name('murid.luluskan');
+            Route::post('/murid/naik-kelas', [MuridController::class, 'naikKelas'])->name('murid.naik-kelas');
             Route::resource('murid', MuridController::class)->except(['show', 'create']);
+
             Route::post('/guru/import', [GuruController::class, 'import'])->name('guru.import');
             Route::get('/guru/export', [GuruController::class, 'export'])->name('guru.export');
             Route::resource('guru', GuruController::class)->except(['show', 'create']);
+
             Route::resource('kategori', KategoriController::class)->except(['show', 'create', 'edit']);
+
             Route::resource('ddc', DdcController::class)->except(['show', 'create', 'edit']);
+
             Route::resource('harga-buku', HargaBukuController::class)->except(['show', 'create', 'edit']);
+
+            Route::get('/akses-admin', [AksesAdminController::class, 'index'])->name('akses-admin.index');
+            Route::put('/akses-admin/{user}', [AksesAdminController::class, 'update'])->name('akses-admin.update');
         });
 
     Route::get('/pengunjung-export', [PengunjungController::class, 'export'])

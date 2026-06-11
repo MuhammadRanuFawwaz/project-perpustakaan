@@ -67,6 +67,16 @@ class DashboardController extends Controller
             ->orderByDesc('total')
             ->get();
 
+        $statistikBukuKategori = Buku::leftJoin('kategori', 'buku.id_kategori', '=', 'kategori.id')
+            ->select(
+                DB::raw("COALESCE(kategori.nama_kategori, 'Tanpa Kategori') as nama_kategori"),
+                DB::raw('COUNT(buku.kode_buku) as total_judul'),
+                DB::raw('COALESCE(SUM(buku.stok), 0) as total_buku')
+            )
+            ->groupBy('kategori.nama_kategori')
+            ->orderByDesc('total_buku')
+            ->get();
+
         $aktivitasPengunjung = Pengunjung::latest()
             ->take(5)
             ->get()
@@ -134,9 +144,11 @@ class DashboardController extends Controller
         return view('dashboard', [
             'periode' => $periode,
             'total_pengunjung' => $totalPengunjung,
-            'total_buku' => Buku::count(),
+            'total_judul_buku' => Buku::count(),
+            'total_jumlah_buku' => Buku::sum('stok'),
             'total_dipinjam' => DetailPeminjaman::where('status_buku', 'dipinjam')->count(),
             'statistikJurusan' => $statistikJurusan,
+            'statistikBukuKategori' => $statistikBukuKategori,
             'aktivitasPengunjung' => $aktivitasPengunjung,
             'aktivitasBuku' => $aktivitasBuku,
             'aktivitasPeminjaman' => $aktivitasPeminjaman,

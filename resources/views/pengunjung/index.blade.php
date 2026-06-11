@@ -186,7 +186,6 @@
 
                         <thead>
                             <tr>
-                                <th>Action</th>
                                 <th>NIS / NIP</th>
                                 <th>Nama Pengunjung</th>
                                 <th>Jenis Pengunjung</th>
@@ -203,44 +202,6 @@
                             @forelse($pengunjung as $p)
 
                             <tr>
-
-                                <td class="action-column">
-
-                                    <button type="button"
-                                        class="edit-btn"
-                                        onclick="openEditModal(
-                                                '{{ $p->id }}',
-                                                '{{ $p->nomor_induk }}',
-                                                '{{ $p->nama_pengunjung }}',
-                                                '{{ $p->jenis_pengunjung }}',
-                                                '{{ $p->id_kelas }}',
-                                                '{{ $p->kelas->nama_kelas ?? '-' }}',
-                                                '{{ $p->kelas->jurusan ?? '-' }}',
-                                                '{{ $p->keperluan }}'
-                                            )">
-
-                                        Edit
-
-                                    </button>
-
-                                    <form action="{{ route('pengunjung.destroy', $p->id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Yakin hapus data ini?')">
-
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit"
-                                            class="delete-btn">
-
-                                            Hapus
-
-                                        </button>
-
-                                    </form>
-
-                                </td>
-
                                 <td>{{ $p->nomor_induk ?? '-' }}</td>
                                 <td>{{ $p->nama_pengunjung }}</td>
                                 <td>{{ $p->jenis_pengunjung }}</td>
