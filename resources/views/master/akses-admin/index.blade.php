@@ -86,4 +86,8 @@
 
     </div>
 
+    @include('profile.modal')
+
+    <script src="{{ asset('js/app-layout.js') }}"></script>
+
 </x-app-layout>
